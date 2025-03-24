@@ -16,4 +16,4 @@ CREATE TABLE IF NOT EXISTS festivals (
     end_date DATE NOT NULL,
     location_id INT,
     FOREIGN KEY (location_id) REFERENCES locations(location_id)
-); hvgadsahfhad
+); 
