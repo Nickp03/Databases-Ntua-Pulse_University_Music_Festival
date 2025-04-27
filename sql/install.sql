@@ -1,3 +1,5 @@
+--DDL
+
 DROP DATABASE IF EXISTS pulse_festival;
 CREATE DATABASE pulse_festival;
 USE pulse_festival;
