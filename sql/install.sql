@@ -106,27 +106,51 @@ CREATE TABLE IF NOT EXISTS artist_band(-- many to many relationship=>linking tab
     FOREIGN KEY (band_id) REFERENCES band(band_id)
 );
 
+CREATE TABLE perf_kind (
+  kind_id   INT AUTO_INCREMENT PRIMARY KEY,
+  kind_name VARCHAR(50) NOT NULL UNIQUE
+);
+
+CREATE TABLE perf_type (
+  type_id   INT AUTO_INCREMENT PRIMARY KEY,
+  type_name VARCHAR(50) NOT NULL UNIQUE
+);
+
 CREATE TABLE IF NOT EXISTS performance (
     performance_id INT PRIMARY KEY AUTO_INCREMENT,
-    type_of_performance ENUM ('warm up','support', 'headline', 'Special guest', 'Closing'),
     perf_time TIME,
-    performance_type ENUM ('solo','band'),
+    kind_id INT NOT NULL,
+    type_id INT NOT NULL,
     artist_id INT,
     band_id INT,
+    FOREIGN KEY (kind_id) REFERENCES perf_kind(kind_id),
+    FOREIGN KEY (artist_id) REFERENCES perf_type(type_id),
     FOREIGN KEY (artist_id) REFERENCES artist(artist_id),
     FOREIGN KEY (band_id) REFERENCES band(band_id)
 );
 
+CREATE TABLE ticket_category (
+  cat_id   INT AUTO_INCREMENT PRIMARY KEY,
+  cat_name VARCHAR(50)    NOT NULL UNIQUE
+);
+
+CREATE TABLE payment_method (
+  pm_id   INT AUTO_INCREMENT PRIMARY KEY,
+  pm_name VARCHAR(50)    NOT NULL UNIQUE
+);
+
 CREATE TABLE  IF NOT EXISTS ticket (
-	ticket_id BIGINT(13) PRIMARY KEY, 
-    ticket_category ENUM('general_entry','VIP','backstage'),
+	ticket_id BIGINT(13) PRIMARY KEY,
     purchase_date DATETIME DEFAULT NOW(),
     cost DECIMAL(4,2),
-    method_of_purchase ENUM ('debit','credit','bank_account','pay-pal'),
     activated BOOLEAN DEFAULT FALSE,
     performance_id INT,
+    cat_id INT NOT NULL,
+    pm_id INT NOT NULL,
     CONSTRAINT check_ticket CHECK (length(ticket_id)=13),
-    FOREIGN KEY (performance_id) REFERENCES performance(performance_id) ON DELETE CASCADE
+    FOREIGN KEY (performance_id) REFERENCES performance(performance_id) ON DELETE CASCADE,
+    FOREIGN KEY (cat_id) REFERENCES ticket_category(cat_id),
+    FOREIGN KEY (pm_id) REFERENCES payment_method(pm_id)
 );
 
 CREATE TABLE IF NOT EXISTS owner (
