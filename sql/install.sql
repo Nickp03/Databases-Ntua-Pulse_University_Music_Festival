@@ -1,8 +1,8 @@
 --DDL
 
-DROP DATABASE IF EXISTS pulse_festival;
-CREATE DATABASE pulse_festival;
-USE pulse_festival;
+DROP DATABASE IF EXISTS pulse_university;
+CREATE DATABASE pulse_university;
+USE pulse_university;
 
 DROP TABLE IF EXISTS location;
 CREATE TABLE location (
@@ -44,14 +44,28 @@ CREATE TABLE event (
 	FOREIGN KEY (stage_id) REFERENCES stage(stage_id)
 );
 
+DROP TABLE IF EXISTS staff_role;
+CREATE TABLE staff_role (
+  role_id   INT AUTO_INCREMENT PRIMARY KEY,
+  role_name VARCHAR(50) NOT NULL UNIQUE
+);
+
+DROP TABLE IF EXISTS experience_level;
+CREATE TABLE experience_level (
+  level_id   INT AUTO_INCREMENT PRIMARY KEY,
+  level_name VARCHAR(50) NOT NULL UNIQUE
+);
+
 DROP TABLE IF EXISTS staff;
 CREATE TABLE staff (
 	staff_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	name varchar(100) NOT NULL,
 	age INT NOT NULL,
-	role ENUM('τεχνικό', 'ασφάλειας', 'βοηθητικό') NOT NULL,
-	experience ENUM('ειδικευόμενος', 'αρχάριος', 'μέσος', 'έμπειρος', 'πολύ έμπειρος') NOT NULL,
-	CHECK (age > 0)
+	role_id INT NOT NULL,
+    level_id INT NOT NULL,
+	CONSTRAINT check_age CHECK (age > 0),
+    FOREIGN KEY (role_id) REFERENCES staff_role(role_id),
+	FOREIGN KEY (level_id) REFERENCES experience_level(level_id)
 );
 
 DROP TABLE IF EXISTS stage_staff;
