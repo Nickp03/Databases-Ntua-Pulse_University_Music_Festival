@@ -206,3 +206,102 @@ CREATE TABLE IF NOT EXISTS review (
     FOREIGN KEY (performance_id) REFERENCES performance(performance_id) ON DELETE CASCADE,
     FOREIGN KEY (owner_id) REFERENCES owner(owner_id) ON DELETE CASCADE
 );
+
+CREATE TABLE review_summary (-- Extra table to have per-performance reviews
+  performance_id INT PRIMARY KEY, -- One-to-one relationship (primary and foreign keys are the same)
+  total_reviews INT NOT NULL DEFAULT 0,
+  avg_interpretation DECIMAL(4,2) NOT NULL DEFAULT 0,
+  avg_sound_and_lighting DECIMAL(4,2) NOT NULL DEFAULT 0,
+  avg_stage_presence DECIMAL(4,2) NOT NULL DEFAULT 0,
+  avg_organization DECIMAL(4,2) NOT NULL DEFAULT 0,
+  avg_overall_impression DECIMAL(4,2) NOT NULL DEFAULT 0,
+  FOREIGN KEY (performance_id) REFERENCES performance(performance_id) ON DELETE CASCADE
+);
+
+CREATE INDEX idx_review_perf ON review(performance_id);
+CREATE INDEX idx_review_owner ON review(owner_id);
+CREATE INDEX idx_review_perf_date ON review(performance_id, review_date);
+
+-- Trigger to ensure that an owner can only review a performance once
+
+DELIMITER $$
+CREATE TRIGGER review_no_dup
+BEFORE INSERT ON review
+FOR EACH ROW
+BEGIN
+  IF EXISTS (
+    SELECT 1 
+	FROM review
+	WHERE performance_id=NEW.performance_id AND owner_id=NEW.owner_id
+  ) 
+  THEN
+	SIGNAL SQLSTATE '45000'
+	SET MESSAGE_TEXT = 'Duplicate review: an owner may only review each performance once';
+  END IF;
+END$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE TRIGGER review_sum_before_insert
+BEFORE INSERT ON review
+FOR EACH ROW
+BEGIN -- If no summary row exists yet for this performance, create it
+  IF NOT EXISTS (
+    SELECT 1 FROM review_summary
+	WHERE performance_id = NEW.performance_id
+  ) 
+  THEN
+    INSERT INTO review_summary(performance_id)
+    VALUES (NEW.performance_id);
+  END IF;
+END$$
+
+CREATE TRIGGER review_sum_after_insert
+AFTER INSERT ON review
+FOR EACH ROW
+BEGIN
+  UPDATE review_summary
+  SET
+       avg_interpretation     = (avg_interpretation*total_reviews + NEW.interpretation)/(total_reviews+1),
+       avg_sound_and_lighting = (avg_sound_and_lighting*total_reviews + NEW.sound_and_lighting)/(total_reviews+1),
+       avg_stage_presence     = (avg_stage_presence*total_reviews + NEW.stage_presence)/(total_reviews+1),
+       avg_organization       = (avg_organization*total_reviews + NEW.organization)/(total_reviews+1),
+       avg_overall_impression = (avg_overall_impression*total_reviews + NEW.overall_impression)/(total_reviews+1),
+       total_reviews          = total_reviews + 1
+  WHERE performance_id = NEW.performance_id;
+END$$
+
+CREATE TRIGGER review_sum_after_update
+AFTER UPDATE ON review
+FOR EACH ROW
+BEGIN
+  UPDATE review_summary
+  SET
+       avg_interpretation     = (avg_interpretation*total_reviews - OLD.interpretation + NEW.interpretation)/total_reviews,
+       avg_sound_and_lighting = (avg_sound_and_lighting*total_reviews - OLD.sound_and_lighting + NEW.sound_and_lighting)/total_reviews,
+       avg_stage_presence     = (avg_stage_presence*total_reviews - OLD.stage_presence + NEW.stage_presence)/total_reviews,
+       avg_organization       = (avg_organization*total_reviews - OLD.organization + NEW.organization)/total_reviews,
+       avg_overall_impression = (avg_overall_impression*total_reviews - OLD.overall_impression + NEW.overall_impression)/total_reviews
+  WHERE performance_id = OLD.performance_id;
+END$$
+
+
+CREATE TRIGGER review_sum_after_delete
+AFTER DELETE ON review
+FOR EACH ROW
+BEGIN
+  IF (SELECT total_reviews FROM review_summary WHERE performance_id = OLD.performance_id) <= 1 THEN
+      DELETE FROM review_summary WHERE performance_id = OLD.performance_id;
+  ELSE
+    UPDATE review_summary
+	SET
+         avg_interpretation     = (avg_interpretation*total_reviews - OLD.interpretation)/(total_reviews-1),
+         avg_sound_and_lighting = (avg_sound_and_lighting*total_reviews - OLD.sound_and_lighting)/(total_reviews-1),
+         avg_stage_presence     = (avg_stage_presence*total_reviews - OLD.stage_presence)/(total_reviews-1),
+         avg_organization       = (avg_organization*total_reviews - OLD.organization)/(total_reviews-1),
+         avg_overall_impression = (avg_overall_impression*total_reviews - OLD.overall_impression)/(total_reviews-1),
+         total_reviews          = total_reviews - 1
+	WHERE performance_id = OLD.performance_id;
+  END IF;
+END$$
+DELIMITER ;
