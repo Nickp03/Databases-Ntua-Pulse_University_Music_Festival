@@ -124,7 +124,7 @@ CREATE TABLE IF NOT EXISTS performance (
     artist_id INT,
     band_id INT,
     FOREIGN KEY (kind_id) REFERENCES perf_kind(kind_id),
-    FOREIGN KEY (artist_id) REFERENCES perf_type(type_id),
+    FOREIGN KEY (type_id) REFERENCES perf_type(type_id),
     FOREIGN KEY (artist_id) REFERENCES artist(artist_id),
     FOREIGN KEY (band_id) REFERENCES band(band_id)
 );
