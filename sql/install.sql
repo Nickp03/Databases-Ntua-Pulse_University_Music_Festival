@@ -1,4 +1,4 @@
---DDL
+-- DDL
 
 DROP DATABASE IF EXISTS pulse_university;
 CREATE DATABASE pulse_university;
