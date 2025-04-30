@@ -190,7 +190,7 @@ CREATE TABLE IF NOT EXISTS resell_queue(
 
 CREATE TABLE IF NOT EXISTS review (
     review_id INT PRIMARY KEY AUTO_INCREMENT,
-    ticket_id INT,
+    ticket_id BIGINT(13),
     interpretation TINYINT,
     sound_and_lighting TINYINT,
     stage_presence TINYINT,
