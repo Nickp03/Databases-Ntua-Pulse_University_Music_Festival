@@ -2,7 +2,7 @@ so, οι κώδικες που θέλω να βάλω στο create tables ( χ�
 
 CREATE TABLE IF NOT EXISTS payment_method (
   pm_id   INT AUTO_INCREMENT PRIMARY KEY,
-  pm_name VARCHAR(12) NOT NULL UNIQUE -- αλλαξα το μεγεθος τιποτα ενδιαφερον ( για να έχουμε επιλογές credit debit και bank acc)
+  pm_name VARCHAR(12) NOT NULL UNIQUE
 );
 
 CREATE TABLE IF NOT EXISTS owner (
@@ -15,6 +15,8 @@ CREATE TABLE IF NOT EXISTS owner (
     payment_info VARCHAR(19), -- 16 digit card info + CVC --KANTO NOT NULL
     total_charge DECIMAL(6,2) DEFAULT 0,
     CONSTRAINT check_age CHECK (age >= 18),
+    CONSTRAINT distinct_method_of_purchase
+		CHECK( method_of_purchase= 'debit' OR method_of_purchase= 'credit' OR method_of_purchase= 'bank_account'),
     CONSTRAINT critical_info UNIQUE (first_name,last_name,phone_number),
     FOREIGN KEY (method_of_purchase) REFERENCES payment_method(pm_name)
 );
@@ -35,6 +37,8 @@ CREATE TABLE  IF NOT EXISTS ticket (
     owner_id INT NOT NULL,
     CONSTRAINT check_ticket CHECK (length(ticket_id)=13),
     CONSTRAINT no_double_tickets_per_event UNIQUE (owner_id,event_id), -- one ticket/performance per owner
+    CONSTRAINT distinct_method_of_purchase
+		CHECK( method_of_purchase= 'debit' OR method_of_purchase= 'credit' OR method_of_purchase= 'bank_account'),
     CONSTRAINT distict_categories CHECK( ticket_category= 'general_entry' OR ticket_category='VIP' OR ticket_category='backstage'),
     FOREIGN KEY (owner_id) REFERENCES owner(owner_id) ON DELETE CASCADE,
     FOREIGN KEY (event_id) REFERENCES event(event_id) ON DELETE CASCADE,
@@ -52,6 +56,8 @@ CREATE TABLE IF NOT EXISTS buyer (
     payment_info VARCHAR(19) ,-- ΚΑΝΤΟ NOT NULL,
     number_of_desired_tickets INT DEFAULT 0,
     CONSTRAINT check_age CHECK (age >= 18),
+    CONSTRAINT distinct_method_of_purchase
+		CHECK( method_of_purchase= 'debit' OR method_of_purchase= 'credit' OR method_of_purchase= 'bank_account'),
     FOREIGN KEY (method_of_purchase) REFERENCES payment_method(pm_name)
 );
 
