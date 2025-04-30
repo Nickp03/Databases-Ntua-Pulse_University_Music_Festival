@@ -230,10 +230,10 @@ BEFORE INSERT ON review
 FOR EACH ROW
 BEGIN
   IF EXISTS (
-    SELECT 1 
+    SELECT 1
 	  FROM review
 	  WHERE performance_id=NEW.performance_id AND ticket_id=NEW.ticket_id
-  ) 
+  )
   THEN
 	  SIGNAL SQLSTATE '45000'
 	  SET MESSAGE_TEXT = 'Duplicate review: an owner may only review each performance once';
@@ -247,8 +247,9 @@ BEFORE INSERT ON review
 FOR EACH ROW
 BEGIN -- If no summary row exists yet for this performance, create it
   IF NOT EXISTS (
-    SELECT 1 FROM review_summary
-	  WHERE performance_id = NEW.performance_id
+    SELECT 1
+    FROM review_summary
+    WHERE performance_id = NEW.performance_id
   ) 
   THEN
     INSERT INTO review_summary(performance_id) VALUES (NEW.performance_id);
@@ -261,12 +262,12 @@ FOR EACH ROW
 BEGIN
   UPDATE review_summary
   SET
-       avg_interpretation     = (avg_interpretation*total_reviews + NEW.interpretation)/(total_reviews+1),
-       avg_sound_and_lighting = (avg_sound_and_lighting*total_reviews + NEW.sound_and_lighting)/(total_reviews+1),
-       avg_stage_presence     = (avg_stage_presence*total_reviews + NEW.stage_presence)/(total_reviews+1),
-       avg_organization       = (avg_organization*total_reviews + NEW.organization)/(total_reviews+1),
-       avg_overall_impression = (avg_overall_impression*total_reviews + NEW.overall_impression)/(total_reviews+1),
-       total_reviews          = total_reviews + 1
+      avg_interpretation = (avg_interpretation*total_reviews + NEW.interpretation)/(total_reviews+1),
+      avg_sound_and_lighting = (avg_sound_and_lighting*total_reviews + NEW.sound_and_lighting)/(total_reviews+1),
+      avg_stage_presence = (avg_stage_presence*total_reviews + NEW.stage_presence)/(total_reviews+1),
+      avg_organization = (avg_organization*total_reviews + NEW.organization)/(total_reviews+1),
+      avg_overall_impression = (avg_overall_impression*total_reviews + NEW.overall_impression)/(total_reviews+1),
+      total_reviews = total_reviews + 1
   WHERE performance_id = NEW.performance_id;
 END$$
 
@@ -276,14 +277,13 @@ FOR EACH ROW
 BEGIN
   UPDATE review_summary
   SET
-       avg_interpretation     = (avg_interpretation*total_reviews - OLD.interpretation + NEW.interpretation)/total_reviews,
-       avg_sound_and_lighting = (avg_sound_and_lighting*total_reviews - OLD.sound_and_lighting + NEW.sound_and_lighting)/total_reviews,
-       avg_stage_presence     = (avg_stage_presence*total_reviews - OLD.stage_presence + NEW.stage_presence)/total_reviews,
-       avg_organization       = (avg_organization*total_reviews - OLD.organization + NEW.organization)/total_reviews,
-       avg_overall_impression = (avg_overall_impression*total_reviews - OLD.overall_impression + NEW.overall_impression)/total_reviews
+      avg_interpretation = (avg_interpretation*total_reviews - OLD.interpretation + NEW.interpretation)/total_reviews,
+      avg_sound_and_lighting = (avg_sound_and_lighting*total_reviews - OLD.sound_and_lighting + NEW.sound_and_lighting)/total_reviews,
+      avg_stage_presence = (avg_stage_presence*total_reviews - OLD.stage_presence + NEW.stage_presence)/total_reviews,
+      avg_organization = (avg_organization*total_reviews - OLD.organization + NEW.organization)/total_reviews,
+      avg_overall_impression = (avg_overall_impression*total_reviews - OLD.overall_impression + NEW.overall_impression)/total_reviews
   WHERE performance_id = OLD.performance_id;
 END$$
-
 
 CREATE TRIGGER review_sum_after_delete
 AFTER DELETE ON review
@@ -294,12 +294,12 @@ BEGIN
   ELSE
     UPDATE review_summary
 	  SET
-         avg_interpretation     = (avg_interpretation*total_reviews - OLD.interpretation)/(total_reviews-1),
-         avg_sound_and_lighting = (avg_sound_and_lighting*total_reviews - OLD.sound_and_lighting)/(total_reviews-1),
-         avg_stage_presence     = (avg_stage_presence*total_reviews - OLD.stage_presence)/(total_reviews-1),
-         avg_organization       = (avg_organization*total_reviews - OLD.organization)/(total_reviews-1),
-         avg_overall_impression = (avg_overall_impression*total_reviews - OLD.overall_impression)/(total_reviews-1),
-         total_reviews          = total_reviews - 1
+        avg_interpretation = (avg_interpretation*total_reviews - OLD.interpretation)/(total_reviews-1),
+        avg_sound_and_lighting = (avg_sound_and_lighting*total_reviews - OLD.sound_and_lighting)/(total_reviews-1),
+        avg_stage_presence = (avg_stage_presence*total_reviews - OLD.stage_presence)/(total_reviews-1),
+        avg_organization = (avg_organization*total_reviews - OLD.organization)/(total_reviews-1),
+        avg_overall_impression = (avg_overall_impression*total_reviews - OLD.overall_impression)/(total_reviews-1),
+        total_reviews = total_reviews - 1
 	  WHERE performance_id = OLD.performance_id;
   END IF;
 END$$
