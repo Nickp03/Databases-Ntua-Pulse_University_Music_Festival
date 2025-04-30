@@ -190,7 +190,7 @@ CREATE TABLE IF NOT EXISTS resell_queue(
 
 CREATE TABLE IF NOT EXISTS review (
     review_id INT PRIMARY KEY AUTO_INCREMENT,
-    owner_id INT,
+    ticket_id INT,
     interpretation TINYINT,
     sound_and_lighting TINYINT,
     stage_presence TINYINT,
@@ -204,7 +204,7 @@ CREATE TABLE IF NOT EXISTS review (
     CONSTRAINT check_org CHECK (organization BETWEEN 1 AND 5),
     CONSTRAINT check_overall CHECK (overall_impression BETWEEN 1 AND 5),
     FOREIGN KEY (performance_id) REFERENCES performance(performance_id) ON DELETE CASCADE,
-    FOREIGN KEY (owner_id) REFERENCES owner(owner_id) ON DELETE CASCADE
+    FOREIGN KEY (ticket_id) REFERENCES ticket(ticket_id) ON DELETE CASCADE
 );
 
 CREATE TABLE review_summary (-- Extra table to have per-performance reviews
@@ -218,11 +218,11 @@ CREATE TABLE review_summary (-- Extra table to have per-performance reviews
     FOREIGN KEY (performance_id) REFERENCES performance(performance_id) ON DELETE CASCADE
 );
 
-CREATE INDEX idx_review_perf ON review(performance_id);
-CREATE INDEX idx_review_owner ON review(owner_id);
-CREATE INDEX idx_review_perf_date ON review(performance_id, review_date);
+CREATE INDEX review_perf ON review(performance_id);
+CREATE INDEX review_ticket ON review(ticket_id);
+CREATE INDEX review_perf_date ON review(performance_id, review_date);
 
--- Trigger to ensure that an owner can only review a performance once
+-- Trigger to ensure that an owner/ticket can only review a performance once
 
 DELIMITER $$
 CREATE TRIGGER review_no_dup
@@ -232,7 +232,7 @@ BEGIN
   IF EXISTS (
     SELECT 1 
 	  FROM review
-	  WHERE performance_id=NEW.performance_id AND owner_id=NEW.owner_id
+	  WHERE performance_id=NEW.performance_id AND ticket_id=NEW.ticket_id
   ) 
   THEN
 	  SIGNAL SQLSTATE '45000'
