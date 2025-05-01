@@ -218,7 +218,7 @@ CREATE TABLE IF NOT EXISTS buyer_queue(
 
 CREATE TABLE IF NOT EXISTS review (
     review_id INT PRIMARY KEY AUTO_INCREMENT,
-    ticket_id BIGINT(13),
+    ticket_id BIGINT(13) UNSIGNED,
     interpretation TINYINT,
     sound_and_lighting TINYINT,
     stage_presence TINYINT,
