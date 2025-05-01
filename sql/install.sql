@@ -3,6 +3,7 @@
 DROP DATABASE IF EXISTS pulse_university;
 CREATE DATABASE pulse_university;
 USE pulse_university;
+SET global event_scheduler=ON;
 
 DROP TABLE IF EXISTS location;
 CREATE TABLE location (
