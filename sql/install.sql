@@ -129,63 +129,90 @@ CREATE TABLE IF NOT EXISTS performance (
     FOREIGN KEY (band_id) REFERENCES band(band_id)
 );
 
-CREATE TABLE ticket_category (
+CREATE TABLE IF NOT EXISTS payment_method (
+  pm_id   INT AUTO_INCREMENT PRIMARY KEY,
+  pm_name VARCHAR(12) NOT NULL UNIQUE
+);
+
+CREATE TABLE IF NOT EXISTS owner (
+    owner_id INT AUTO_INCREMENT PRIMARY KEY,
+    first_name VARCHAR(20) NOT NULL,
+    last_name VARCHAR(30) NOT NULL,
+    age INT NOT NULL,
+    phone_number VARCHAR(13) NOT NULL,-- +YY KK XX XX XX XX 
+    method_of_purchase VARCHAR(12),
+    payment_info VARCHAR(19), -- 16 digit card info + CVC --KANTO NOT NULL
+    total_charge DECIMAL(6,2) DEFAULT 0,
+    CONSTRAINT check_age CHECK (age >= 18),
+    CONSTRAINT critical_info UNIQUE (first_name,last_name,phone_number),
+    FOREIGN KEY (method_of_purchase) REFERENCES payment_method(pm_name)
+)AUTO_INCREMENT=1;
+
+CREATE TABLE IF NOT EXISTS ticket_category (
   cat_id   INT AUTO_INCREMENT PRIMARY KEY,
   cat_name VARCHAR(50)    NOT NULL UNIQUE
 );
 
-CREATE TABLE payment_method (
-  pm_id   INT AUTO_INCREMENT PRIMARY KEY,
-  pm_name VARCHAR(50)    NOT NULL UNIQUE
-);
-
 CREATE TABLE  IF NOT EXISTS ticket (
-	ticket_id BIGINT(13) PRIMARY KEY,
+	ticket_id BIGINT(13) UNSIGNED PRIMARY KEY AUTO_INCREMENT, 
+    ticket_category VARCHAR(13),
     purchase_date DATETIME DEFAULT NOW(),
-    cost DECIMAL(4,2),
+    cost DECIMAL(6,2),
+    method_of_purchase VARCHAR(12),
     activated BOOLEAN DEFAULT FALSE,
-    performance_id INT,
-    cat_id INT NOT NULL,
-    pm_id INT NOT NULL,
-    CONSTRAINT check_ticket CHECK (length(ticket_id)=13),
-    FOREIGN KEY (performance_id) REFERENCES performance(performance_id) ON DELETE CASCADE,
-    FOREIGN KEY (cat_id) REFERENCES ticket_category(cat_id),
-    FOREIGN KEY (pm_id) REFERENCES payment_method(pm_id)
-);
-
-CREATE TABLE IF NOT EXISTS owner (
-    owner_id INT PRIMARY KEY AUTO_INCREMENT,
-    first_name VARCHAR(50) NOT NULL,
-    last_name VARCHAR(50) NOT NULL,
-    age INT,
-    phone_number VARCHAR(20),
-    CONSTRAINT check_age CHECK (age >= 18)
-);
+    event_id INT NOT NULL,
+    owner_id INT NOT NULL,
+    CONSTRAINT no_double_tickets_per_event UNIQUE (owner_id,event_id), -- one ticket/performance per owner
+    CONSTRAINT distict_categories CHECK( ticket_category= 'general_entry' OR ticket_category='VIP' OR ticket_category='backstage'),
+    FOREIGN KEY (owner_id) REFERENCES owner(owner_id) ON DELETE CASCADE,
+    FOREIGN KEY (event_id) REFERENCES event(event_id) ON DELETE CASCADE,
+    FOREIGN KEY (ticket_category) REFERENCES ticket_category(cat_name),
+    FOREIGN KEY (method_of_purchase) REFERENCES payment_method(pm_name)
+    )AUTO_INCREMENT = 1000000000000;
 
 CREATE TABLE IF NOT EXISTS buyer (
     buyer_id INT PRIMARY KEY AUTO_INCREMENT,
-    buyer_name VARCHAR(100) NOT NULL,
-    date_of_interest DATETIME DEFAULT CURRENT_TIMESTAMP,
-    payment_method ENUM('credit', 'paypal', 'debit', 'bank account') NOT NULL,
-    ticket_id BIGINT(13),
-    performance_id INT,
-    category ENUM('general', 'VIP', 'backstage'),
-    FOREIGN KEY (ticket_id) REFERENCES ticket(ticket_id)
+    first_name VARCHAR(20) NOT NULL,
+    last_name VARCHAR(30) NOT NULL,
+    age INT,
+	phone_number VARCHAR(13),-- +YY KK XX XX XX XX
+    method_of_purchase VARCHAR(12),
+    payment_info VARCHAR(19) ,-- ΚΑΝΤΟ NOT NULL,
+    number_of_desired_tickets INT DEFAULT 0,
+    CONSTRAINT check_age CHECK (age >= 18),
+    FOREIGN KEY (method_of_purchase) REFERENCES payment_method(pm_name)
 );
 
-CREATE TABLE IF NOT EXISTS resell_queue(
-	resell_id INT PRIMARY KEY,
-	queue_type ENUM('Supply','Demand'),
-    buyer_id INT,
-    seller_id INT,
+CREATE TABLE IF NOT EXISTS seller_queue(
+	resell_id INT PRIMARY KEY AUTO_INCREMENT PRIMARY KEY,
+    seller_id INT NOT NULL, 
 	interest_datetime DATETIME DEFAULT NOW(),
-	ticket_id BIGINT(13), -- NULL for buyer
-    event_id INT,
-    ticket_category ENUM('general_entry','VIP','backstage'),
-    CONSTRAINT check_valid CHECK ( (queue_type='Supply' AND buyer_id IS NULL AND seller_id IS NOT NULL) OR (queue_type='DEMAND' AND buyer_id IS NOT NULL AND seller_id IS NULL)),
+	ticket_id BIGINT(13) UNSIGNED UNIQUE NOT NULL , 
+    event_id INT NOT NULL, 
+    ticket_category VARCHAR(13) NOT NULL,
+    sold BOOLEAN DEFAULT FALSE,
+    CONSTRAINT distict_categories CHECK( ticket_category= 'general_entry' OR ticket_category='VIP' OR ticket_category='backstage'),
+    FOREIGN KEY (seller_id) REFERENCES owner(owner_id) ON DELETE CASCADE,
+    FOREIGN KEY (ticket_id) REFERENCES ticket(ticket_id) ON DELETE CASCADE,
+    FOREIGN KEY (event_id) REFERENCES event(event_id) ON DELETE CASCADE,
+    FOREIGN KEY (ticket_category) REFERENCES ticket_category(cat_name)
+);
+CREATE TABLE IF NOT EXISTS buyer_queue(
+	resell_id INT AUTO_INCREMENT PRIMARY KEY,
+    buyer_id INT NOT NULL,
+	interest_datetime DATETIME DEFAULT NOW(),
+	ticket_id BIGINT(13) UNSIGNED DEFAULT NULL,
+    event_id INT DEFAULT NULL,
+    ticket_category VARCHAR(13) DEFAULT NULL,
+    sold BOOLEAN DEFAULT FALSE,
+    CONSTRAINT distict_categories CHECK( ticket_category= 'general_entry' OR ticket_category='VIP' OR ticket_category='backstage'),
+    CONSTRAINT check_characteristics CHECK (
+    (ticket_id IS NOT NULL AND (event_id IS NULL AND ticket_category IS NULL)) OR
+    (ticket_id IS NULL AND (event_id IS NOT NULL AND ticket_category IS NOT NULL))),
     FOREIGN KEY (buyer_id) REFERENCES buyer(buyer_id) ON DELETE CASCADE,
     FOREIGN KEY (ticket_id) REFERENCES ticket(ticket_id) ON DELETE CASCADE,
-    FOREIGN KEY (event_id) REFERENCES event(event_id) ON DELETE CASCADE
+    FOREIGN KEY (event_id) REFERENCES event(event_id) ON DELETE CASCADE,
+    FOREIGN KEY (ticket_category) REFERENCES ticket_category(cat_name)
 );
 
 CREATE TABLE IF NOT EXISTS review (
