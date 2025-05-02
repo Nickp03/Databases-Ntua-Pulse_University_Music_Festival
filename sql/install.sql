@@ -127,6 +127,7 @@ CREATE TABLE IF NOT EXISTS performance (
     band_id INT,
     event_id INT,
     CONSTRAINT check_duration CHECK (duration BETWEEN 1 AND 180),
+    CONSTRAINT check_artist_or_band CHECK ((artist_id IS NOT NULL AND band_id IS NULL) OR (artist_id IS NULL AND band_id IS NOT NULL)),
     FOREIGN KEY (kind_id) REFERENCES perf_kind(kind_id),
     FOREIGN KEY (type_id) REFERENCES perf_type(type_id),
     FOREIGN KEY (artist_id) REFERENCES artist(artist_id),
