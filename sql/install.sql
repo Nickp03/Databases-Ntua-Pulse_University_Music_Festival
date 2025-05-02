@@ -370,3 +370,21 @@ BEGIN
 	END IF;
 END $$
 DELIMITER ;
+
+DELIMITER $$
+CREATE TRIGGER no_cancel_performance
+BEFORE DELETE ON performance
+FOR EACH ROW
+BEGIN
+  SIGNAL SQLSTATE '45000'
+    SET MESSAGE_TEXT = 'Δεν επιτρέπεται η ακύρωση εμφάνισης';
+END$$
+
+CREATE TRIGGER no_cancel_festival
+BEFORE DELETE ON festival
+FOR EACH ROW
+BEGIN
+  SIGNAL SQLSTATE '45000'
+    SET MESSAGE_TEXT = 'Δεν επιτρέπεται η ακύρωση φεστιβάλ';
+END$$
+DELIMITER ;
