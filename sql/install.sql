@@ -108,23 +108,25 @@ CREATE TABLE IF NOT EXISTS artist_band(-- many to many relationship=>linking tab
 )ENGINE=InnoDB;
 
 CREATE TABLE perf_kind (
-  kind_id   INT AUTO_INCREMENT PRIMARY KEY,
+  kind_id INT AUTO_INCREMENT PRIMARY KEY,
   kind_name VARCHAR(50) NOT NULL UNIQUE
 )ENGINE=InnoDB;
 
 CREATE TABLE perf_type (
-  type_id   INT AUTO_INCREMENT PRIMARY KEY,
+  type_id INT AUTO_INCREMENT PRIMARY KEY,
   type_name VARCHAR(50) NOT NULL UNIQUE
 )ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS performance (
     performance_id INT PRIMARY KEY AUTO_INCREMENT,
-    perf_time TIME,
+    perf_datetime DATETIME NOT NULL,
+    duration INT NOT NULL,
     kind_id INT NOT NULL,
     type_id INT NOT NULL,
     artist_id INT,
     band_id INT,
     event_id INT,
+    CONSTRAINT check_duration CHECK (duration BETWEEN 1 AND 180),
     FOREIGN KEY (kind_id) REFERENCES perf_kind(kind_id),
     FOREIGN KEY (type_id) REFERENCES perf_type(type_id),
     FOREIGN KEY (artist_id) REFERENCES artist(artist_id),
@@ -133,7 +135,7 @@ CREATE TABLE IF NOT EXISTS performance (
 )ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS payment_method (
-  pm_id   INT AUTO_INCREMENT PRIMARY KEY,
+  pm_id INT AUTO_INCREMENT PRIMARY KEY,
   pm_name VARCHAR(12) NOT NULL UNIQUE
 )ENGINE=InnoDB;
 
@@ -152,8 +154,8 @@ CREATE TABLE IF NOT EXISTS owner (
 )AUTO_INCREMENT=1, ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS ticket_category (
-  cat_id   INT AUTO_INCREMENT PRIMARY KEY,
-  cat_name VARCHAR(50)    NOT NULL UNIQUE
+  cat_id INT AUTO_INCREMENT PRIMARY KEY,
+  cat_name VARCHAR(50) NOT NULL UNIQUE
 )ENGINE=InnoDB;
 
 CREATE TABLE  IF NOT EXISTS ticket (
@@ -252,6 +254,7 @@ CREATE TABLE review_summary (-- Extra table to have per-performance reviews
 CREATE INDEX review_perf ON review(performance_id);
 CREATE INDEX review_ticket ON review(ticket_id);
 CREATE INDEX review_perf_date ON review(performance_id, review_date);
+CREATE INDEX perf_datetime ON performance(perf_datetime);
 
 -- Trigger to ensure that an owner/ticket can only review a performance once
 
@@ -334,4 +337,36 @@ BEGIN
 	  WHERE performance_id = OLD.performance_id;
   END IF;
 END$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE TRIGGER scheduling
+BEFORE INSERT ON performance
+FOR EACH ROW
+BEGIN
+	DECLARE previous_end DATETIME;
+    DECLARE next_start DATETIME;
+    DECLARE gap INT;
+-- No overlaps
+	IF EXISTS(
+		SELECT 1
+		FROM performance
+		WHERE event_id=NEW.event_id AND perf_datetime<NEW.perf_datetime + INTERVAL NEW.duration MINUTE 
+			AND NEW.perf_datetime<perf_datetime + INTERVAL duration MINUTE) THEN
+			SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'Performance overlaps another in the same event';
+	END IF;
+-- Enforce a 5-30 minute break
+	SELECT MAX(perf_datetime + INTERVAL duration MINUTE)
+    INTO previous_end
+    FROM performance
+    WHERE event_id=NEW.event_id;
+    IF previous_end IS NOT NULL THEN
+		SET gap=TIMESTAMPDIFF(MINUTE,previous_end,NEW.perf_datetime);
+        IF gap<5 OR gap>30 THEN
+			SIGNAL SQLSTATE '45000'
+			SET MESSAGE_TEXT = 'Break between performances must be between 5 and 30 minutes';
+		END IF;
+	END IF;
+END $$
 DELIMITER ;
