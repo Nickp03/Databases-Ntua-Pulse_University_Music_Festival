@@ -14,7 +14,7 @@ CREATE TABLE location (
 	city VARCHAR(100) NOT NULL,
 	country VARCHAR(100) NOT NULL,
 	continent VARCHAR(100) NOT NULL
-);
+)ENGINE=InnoDB;
 
 DROP TABLE IF EXISTS festival;
 CREATE TABLE festival (
@@ -25,7 +25,7 @@ CREATE TABLE festival (
 	location_id INT NOT NULL,
 	CONSTRAINT chk_festival_dates CHECK (start_date <= end_date),
 	FOREIGN KEY (location_id) REFERENCES location(location_id)
-);
+)ENGINE=InnoDB;
 
 DROP TABLE IF EXISTS stage;
 CREATE TABLE stage (
@@ -34,7 +34,7 @@ CREATE TABLE stage (
     description TEXT,
     max_capacity INT NOT NULL,
     equipment TEXT
-);
+)ENGINE=InnoDB;
 
 DROP TABLE IF EXISTS event;
 CREATE TABLE event (
@@ -43,19 +43,19 @@ CREATE TABLE event (
 	stage_id INT NOT NULL,
 	FOREIGN KEY (festival_id) REFERENCES festival(festival_id),
 	FOREIGN KEY (stage_id) REFERENCES stage(stage_id)
-);
+)ENGINE=InnoDB;
 
 DROP TABLE IF EXISTS staff_role;
 CREATE TABLE staff_role (
   role_id   INT AUTO_INCREMENT PRIMARY KEY,
   role_name VARCHAR(50) NOT NULL UNIQUE
-);
+)ENGINE=InnoDB;
 
 DROP TABLE IF EXISTS experience_level;
 CREATE TABLE experience_level (
   level_id   INT AUTO_INCREMENT PRIMARY KEY,
   level_name VARCHAR(50) NOT NULL UNIQUE
-);
+)ENGINE=InnoDB;
 
 DROP TABLE IF EXISTS staff;
 CREATE TABLE staff (
@@ -67,7 +67,7 @@ CREATE TABLE staff (
 	CONSTRAINT check_age CHECK (age > 0),
     FOREIGN KEY (role_id) REFERENCES staff_role(role_id),
 	FOREIGN KEY (level_id) REFERENCES experience_level(level_id)
-);
+)ENGINE=InnoDB;
 
 DROP TABLE IF EXISTS stage_staff;
 CREATE TABLE stage_staff (
@@ -76,7 +76,7 @@ CREATE TABLE stage_staff (
 	PRIMARY KEY (stage_id, staff_id),
 	FOREIGN KEY (stage_id) REFERENCES stage(stage_id),
 	FOREIGN KEY (staff_id) REFERENCES staff(staff_id)
-);
+)ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS artist(
 	artist_id INT PRIMARY KEY AUTO_INCREMENT,
@@ -88,7 +88,7 @@ CREATE TABLE IF NOT EXISTS artist(
     subgenre VARCHAR (20),
     website VARCHAR(77),
     instagram VARCHAR(30)
-);
+)ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS band (
     band_id INT PRIMARY KEY AUTO_INCREMENT,
@@ -98,24 +98,24 @@ CREATE TABLE IF NOT EXISTS band (
     instagram VARCHAR(30),
     genre VARCHAR(50),
     subgenre VARCHAR(50)
-);
+)ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS artist_band(-- many to many relationship=>linking table
 	artist_id INT,
     band_id INT,
     FOREIGN KEY (artist_id) REFERENCES artist(artist_id),
     FOREIGN KEY (band_id) REFERENCES band(band_id)
-);
+)ENGINE=InnoDB;
 
 CREATE TABLE perf_kind (
   kind_id   INT AUTO_INCREMENT PRIMARY KEY,
   kind_name VARCHAR(50) NOT NULL UNIQUE
-);
+)ENGINE=InnoDB;
 
 CREATE TABLE perf_type (
   type_id   INT AUTO_INCREMENT PRIMARY KEY,
   type_name VARCHAR(50) NOT NULL UNIQUE
-);
+)ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS performance (
     performance_id INT PRIMARY KEY AUTO_INCREMENT,
@@ -124,16 +124,18 @@ CREATE TABLE IF NOT EXISTS performance (
     type_id INT NOT NULL,
     artist_id INT,
     band_id INT,
+    event_id INT,
     FOREIGN KEY (kind_id) REFERENCES perf_kind(kind_id),
     FOREIGN KEY (type_id) REFERENCES perf_type(type_id),
     FOREIGN KEY (artist_id) REFERENCES artist(artist_id),
-    FOREIGN KEY (band_id) REFERENCES band(band_id)
-);
+    FOREIGN KEY (band_id) REFERENCES band(band_id),
+    FOREIGN KEY (event_id) REFERENCES event(event_id)
+)ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS payment_method (
   pm_id   INT AUTO_INCREMENT PRIMARY KEY,
   pm_name VARCHAR(12) NOT NULL UNIQUE
-);
+)ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS owner (
     owner_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -147,12 +149,12 @@ CREATE TABLE IF NOT EXISTS owner (
     CONSTRAINT check_age CHECK (age >= 18),
     CONSTRAINT critical_info UNIQUE (first_name,last_name,phone_number),
     FOREIGN KEY (method_of_purchase) REFERENCES payment_method(pm_name)
-)AUTO_INCREMENT=1;
+)AUTO_INCREMENT=1, ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS ticket_category (
   cat_id   INT AUTO_INCREMENT PRIMARY KEY,
   cat_name VARCHAR(50)    NOT NULL UNIQUE
-);
+)ENGINE=InnoDB;
 
 CREATE TABLE  IF NOT EXISTS ticket (
 	ticket_id BIGINT(13) UNSIGNED PRIMARY KEY AUTO_INCREMENT, 
@@ -169,7 +171,7 @@ CREATE TABLE  IF NOT EXISTS ticket (
     FOREIGN KEY (event_id) REFERENCES event(event_id) ON DELETE CASCADE,
     FOREIGN KEY (ticket_category) REFERENCES ticket_category(cat_name),
     FOREIGN KEY (method_of_purchase) REFERENCES payment_method(pm_name)
-    )AUTO_INCREMENT = 1000000000000;
+    )AUTO_INCREMENT = 1000000000000, ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS buyer (
     buyer_id INT PRIMARY KEY AUTO_INCREMENT,
@@ -182,10 +184,10 @@ CREATE TABLE IF NOT EXISTS buyer (
     number_of_desired_tickets INT DEFAULT 0,
     CONSTRAINT check_age CHECK (age >= 18),
     FOREIGN KEY (method_of_purchase) REFERENCES payment_method(pm_name)
-);
+)ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS seller_queue(
-	resell_id INT PRIMARY KEY AUTO_INCREMENT PRIMARY KEY,
+	resell_id INT PRIMARY KEY AUTO_INCREMENT,
     seller_id INT NOT NULL, 
 	interest_datetime DATETIME DEFAULT NOW(),
 	ticket_id BIGINT(13) UNSIGNED UNIQUE NOT NULL , 
@@ -197,7 +199,8 @@ CREATE TABLE IF NOT EXISTS seller_queue(
     FOREIGN KEY (ticket_id) REFERENCES ticket(ticket_id) ON DELETE CASCADE,
     FOREIGN KEY (event_id) REFERENCES event(event_id) ON DELETE CASCADE,
     FOREIGN KEY (ticket_category) REFERENCES ticket_category(cat_name)
-);
+)ENGINE=InnoDB;
+
 CREATE TABLE IF NOT EXISTS buyer_queue(
 	resell_id INT AUTO_INCREMENT PRIMARY KEY,
     buyer_id INT NOT NULL,
@@ -214,7 +217,7 @@ CREATE TABLE IF NOT EXISTS buyer_queue(
     FOREIGN KEY (ticket_id) REFERENCES ticket(ticket_id) ON DELETE CASCADE,
     FOREIGN KEY (event_id) REFERENCES event(event_id) ON DELETE CASCADE,
     FOREIGN KEY (ticket_category) REFERENCES ticket_category(cat_name)
-);
+)ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS review (
     review_id INT PRIMARY KEY AUTO_INCREMENT,
@@ -233,7 +236,7 @@ CREATE TABLE IF NOT EXISTS review (
     CONSTRAINT check_overall CHECK (overall_impression BETWEEN 1 AND 5),
     FOREIGN KEY (performance_id) REFERENCES performance(performance_id) ON DELETE CASCADE,
     FOREIGN KEY (ticket_id) REFERENCES ticket(ticket_id) ON DELETE CASCADE
-);
+)ENGINE=InnoDB;
 
 CREATE TABLE review_summary (-- Extra table to have per-performance reviews
     performance_id INT PRIMARY KEY, -- One-to-one relationship (primary and foreign keys are the same)
@@ -244,7 +247,7 @@ CREATE TABLE review_summary (-- Extra table to have per-performance reviews
     avg_organization DECIMAL(4,2) NOT NULL DEFAULT 0,
     avg_overall_impression DECIMAL(4,2) NOT NULL DEFAULT 0,
     FOREIGN KEY (performance_id) REFERENCES performance(performance_id) ON DELETE CASCADE
-);
+)ENGINE=InnoDB;
 
 CREATE INDEX review_perf ON review(performance_id);
 CREATE INDEX review_ticket ON review(ticket_id);
