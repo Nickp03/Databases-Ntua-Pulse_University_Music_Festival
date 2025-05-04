@@ -41,6 +41,10 @@ CREATE TABLE event (
 	event_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	festival_id INT NOT NULL,
 	stage_id INT NOT NULL,
+  event_date DATE NOT NULL,
+  start_time TIME NOT NULL,
+  end_time TIME NOT NULL,
+  CONSTRAINT chk_event_time CHECK (start_time < end_time),
 	FOREIGN KEY (festival_id) REFERENCES festival(festival_id),
 	FOREIGN KEY (stage_id) REFERENCES stage(stage_id)
 )ENGINE=InnoDB;
