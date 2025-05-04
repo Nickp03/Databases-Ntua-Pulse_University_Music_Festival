@@ -103,9 +103,10 @@ CREATE TABLE IF NOT EXISTS band (
 CREATE TABLE IF NOT EXISTS artist_band(-- many to many relationship=>linking table
 	artist_id INT,
     band_id INT,
+    PRIMARY KEY (band_id, artist_id),
     FOREIGN KEY (artist_id) REFERENCES artist(artist_id),
     FOREIGN KEY (band_id) REFERENCES band(band_id)
-)ENGINE=InnoDB;
+);
 
 CREATE TABLE perf_kind (
   kind_id INT AUTO_INCREMENT PRIMARY KEY,
