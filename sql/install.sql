@@ -402,3 +402,54 @@ BEGIN
     SET MESSAGE_TEXT = 'Δεν επιτρέπεται η ακύρωση φεστιβάλ';
 END$$
 DELIMITER ;
+
+DELIMITER //
+
+CREATE TRIGGER check_vip_ticket_limit
+BEFORE INSERT ON ticket
+FOR EACH ROW
+BEGIN
+  DECLARE v_stage_id INT;
+  DECLARE v_capacity INT;
+  DECLARE v_vip_count INT;
+  DECLARE v_vip_cat_id INT;
+
+  IF NEW.event_id IS NULL THEN
+    SIGNAL SQLSTATE '45000'
+    SET MESSAGE_TEXT = 'Ticket must reference an event.';
+  END IF;
+
+  SELECT cat_id INTO v_vip_cat_id
+  FROM ticket_category
+  WHERE cat_name = 'VIP'
+  LIMIT 1;
+
+  IF NEW.cat_id = v_vip_cat_id THEN
+    BEGIN
+      SELECT stage_id
+      INTO v_stage_id
+      FROM event
+      WHERE event_id = NEW.event_id;
+
+      SELECT max_capacity
+      INTO v_capacity
+      FROM stage
+      WHERE stage_id = v_stage_id;
+
+      SELECT COUNT(*)
+      INTO v_vip_count
+      FROM ticket
+      WHERE event_id = NEW.event_id
+        AND cat_id = v_vip_cat_id;
+
+      IF (v_vip_count + 1) > FLOOR(v_capacity / 10) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Cannot issue more VIP tickets: capacity exceeded.';
+      END IF;
+    END;
+  END IF;
+
+END;
+//
+
+DELIMITER ;
