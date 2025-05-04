@@ -451,5 +451,31 @@ BEGIN
 
 END;
 //
+DELIMITER ;
+
+DELIMITER $$
+
+CREATE TRIGGER check_stage_event_conflict
+BEFORE INSERT ON event
+FOR EACH ROW
+BEGIN
+    DECLARE conflict_count INT;
+
+    SELECT COUNT(*)
+    INTO conflict_count
+    FROM event
+    WHERE stage_id = NEW.stage_id
+      AND event_date = NEW.event_date
+      AND (
+            (NEW.start_time BETWEEN start_time AND end_time) OR
+            (NEW.end_time BETWEEN start_time AND end_time) OR
+            (start_time BETWEEN NEW.start_time AND NEW.end_time)
+          );
+
+    IF conflict_count > 0 THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Η σκηνή είναι ήδη δεσμευμένη για άλλη παράσταση εκείνη την ώρα.';
+    END IF;
+END$$
 
 DELIMITER ;
