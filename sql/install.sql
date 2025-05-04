@@ -78,6 +78,18 @@ CREATE TABLE stage_staff (
 	FOREIGN KEY (staff_id) REFERENCES staff(staff_id)
 )ENGINE=InnoDB;
 
+CREATE TABLE genre (
+    genre_id INT AUTO_INCREMENT PRIMARY KEY,
+    genre_name VARCHAR(50) NOT NULL UNIQUE
+)ENGINE=InnoDB;
+
+CREATE TABLE subgenre (
+    subgenre_id INT AUTO_INCREMENT PRIMARY KEY,
+    subgenre_name VARCHAR(50) NOT NULL UNIQUE,
+    genre_id INT NOT NULL,
+    FOREIGN KEY (genre_id) REFERENCES genre(genre_id)
+)ENGINE=InnoDB;
+
 CREATE TABLE IF NOT EXISTS artist(
 	artist_id INT PRIMARY KEY AUTO_INCREMENT,
     artist_name VARCHAR(20),
@@ -106,7 +118,7 @@ CREATE TABLE IF NOT EXISTS artist_band(-- many to many relationship=>linking tab
     PRIMARY KEY (band_id, artist_id),
     FOREIGN KEY (artist_id) REFERENCES artist(artist_id),
     FOREIGN KEY (band_id) REFERENCES band(band_id)
-);
+)ENGINE=InnoDB;
 
 CREATE TABLE perf_kind (
   kind_id INT AUTO_INCREMENT PRIMARY KEY,
