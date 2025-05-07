@@ -1,0 +1,11 @@
+artist_name,artist_lastname,stage_name,DOB,genre_id,subgenre_id,website,instagram
+John,Johnson,johjohnson,1983-05-20,2,2,http://johjohnson.com,@johjohnson
+Alice,Brown,alibrown,1965-06-11,1,1,http://alibrown.com,@alibrown
+Michael,Davis,micdavis,1968-12-27,5,5,http://micdavis.com,@micdavis
+Emily,Wilson,emiwilson,1962-04-27,4,4,http://emiwilson.com,@emiwilson
+David,Taylor,davtaylor,1978-10-03,3,3,http://davtaylor.com,@davtaylor
+Sophie,Clark,sopclark,1979-07-20,1,1,http://sopclark.com,@sopclark
+Robert,Lee,roblee,1992-08-07,2,2,http://roblee.com,@roblee
+Laura,Walker,lauwalker,1999-01-11,4,4,http://lauwalker.com,@lauwalker
+Chris,Hall,chrhall,1984-02-23,2,2,http://chrhall.com,@chrhall
+Olivia,Allen,oliallen,1994-07-16,2,2,http://oliallen.com,@oliallen
