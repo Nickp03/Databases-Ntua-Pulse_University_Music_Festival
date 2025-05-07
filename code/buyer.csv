@@ -1,0 +1,11 @@
+first_name,last_name,age,phone_number,method_of_purchase,payment_info,number_of_desired_tickets
+Buyer1,Test,55,+98765432101,paypal,,5
+Buyer2,Test,57,+98765432102,cash,,1
+Buyer3,Test,44,+98765432103,cash,,2
+Buyer4,Test,22,+98765432104,credit,,5
+Buyer5,Test,55,+98765432105,paypal,,5
+Buyer6,Test,18,+98765432106,cash,,4
+Buyer7,Test,34,+98765432107,paypal,,1
+Buyer8,Test,21,+98765432108,cash,,4
+Buyer9,Test,48,+98765432109,paypal,,5
+Buyer10,Test,56,+98765432110,paypal,,2
