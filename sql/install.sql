@@ -77,8 +77,9 @@ CREATE TABLE staff (
 DROP TABLE IF EXISTS stage_staff;
 CREATE TABLE stage_staff (
 	stage_id INT NOT NULL,
+    event_id INT NOT NULL,
 	staff_id INT NOT NULL,
-	PRIMARY KEY (stage_id, staff_id),
+	PRIMARY KEY (stage_id,event_id, staff_id),
 	FOREIGN KEY (stage_id) REFERENCES stage(stage_id),
 	FOREIGN KEY (staff_id) REFERENCES staff(staff_id)
 )ENGINE=InnoDB;
@@ -167,7 +168,7 @@ CREATE TABLE IF NOT EXISTS owner (
     first_name VARCHAR(20) NOT NULL,
     last_name VARCHAR(30) NOT NULL,
     age INT NOT NULL,
-    phone_number VARCHAR(13) NOT NULL,-- +YY KK XX XX XX XX 
+    phone_number VARCHAR(14) NOT NULL,-- +YY KK XX XX XX XX 
     method_of_purchase VARCHAR(12),
     payment_info VARCHAR(19), -- 16 digit card info + CVC --KANTO NOT NULL
     total_charge DECIMAL(6,2) DEFAULT 0,
@@ -190,7 +191,7 @@ CREATE TABLE  IF NOT EXISTS ticket (
     activated BOOLEAN DEFAULT FALSE,
     event_id INT NOT NULL,
     owner_id INT NOT NULL,
-    CONSTRAINT no_double_tickets_per_event UNIQUE (owner_id,event_id), -- one ticket/performance per owner
+    CONSTRAINT no_double_tickets_per_event UNIQUE (owner_id,event_id), -- one ticket/event per owner
     CONSTRAINT distict_categories CHECK( ticket_category= 'general_entry' OR ticket_category='VIP' OR ticket_category='backstage'),
     FOREIGN KEY (owner_id) REFERENCES owner(owner_id) ON DELETE CASCADE,
     FOREIGN KEY (event_id) REFERENCES event(event_id) ON DELETE CASCADE,
