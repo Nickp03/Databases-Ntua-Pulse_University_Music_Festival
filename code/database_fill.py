@@ -40,7 +40,7 @@ def _fill_from_csv(table, columns, csv_path):
         print(f"Finished {table}")
 
 # Helper to fill seller_queue from CSV
-def _fill_from_csv(table, columns, csv_path):
+def _fill_from_csv_seller_queue(table, columns, csv_path):
     placeholders = ", ".join(["%s"] * len(columns))
     cols         = ", ".join(columns)
     sql          = f"INSERT INTO {table} ({cols}) VALUES ({placeholders})"
@@ -151,7 +151,7 @@ def fill_buyer(): _fill_from_csv('buyer',
     ['first_name','last_name','age','phone_number','method_of_purchase','payment_info','number_of_desired_tickets'],
     'buyer.csv')
 
-def fill_seller_queue(): _fill_from_csv('seller_queue',
+def fill_seller_queue(): _fill_from_csv_seller_queue('seller_queue',
     ['seller_id','interest_datetime','ticket_id','event_id','ticket_category','sold'],
     'seller_queue.csv')
 
