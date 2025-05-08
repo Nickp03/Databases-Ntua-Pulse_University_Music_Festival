@@ -38,7 +38,6 @@ def _fill_from_csv(table, columns, csv_path):
         cur.close()
         conn.close()
         print(f"Finished {table}")
-#comment to see if i bathed
 
 # Helper to fill seller_queue from CSV
 def _fill_from_csv(table, columns, csv_path):
