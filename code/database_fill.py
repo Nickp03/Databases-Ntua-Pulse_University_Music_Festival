@@ -39,6 +39,33 @@ def _fill_from_csv(table, columns, csv_path):
         conn.close()
         print(f"Finished {table}")
 
+# Helper to fill seller_queue from CSV
+def _fill_from_csv(table, columns, csv_path):
+    placeholders = ", ".join(["%s"] * len(columns))
+    cols         = ", ".join(columns)
+    sql          = f"INSERT INTO {table} ({cols}) VALUES ({placeholders})"
+    conn         = connect()
+    try:
+        cur = conn.cursor()
+        # Άνοιγμα και ανάγνωση του CSV
+        with open('seller_queue.csv', mode='r', encoding='utf-8') as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                owner_id=row['Owner_id']
+                ticket_id=row['Ticket_id']
+            # Κλήση stored procedure για κάθε γραμμή
+            cur.callproc('insert_into_seller_queue', (int(owner_id),int(ticket_id)))
+        conn.commit()   # commit *before* closing
+    except Exception as e:
+        print(f"Error populating {table}:", e)
+    finally:
+        cur.close()
+        conn.close()
+        print(f"Finished {table}")
+
+
+
+
 # Fill functions for each table
 def fill_location(): _fill_from_csv('location',
     ['address','latitude','longitude','city','country','continent'],
