@@ -74,14 +74,15 @@ CREATE TABLE staff (
 	FOREIGN KEY (level_id) REFERENCES experience_level(level_id)
 )ENGINE=InnoDB;
 
-DROP TABLE IF EXISTS stage_staff;
-CREATE TABLE stage_staff (
-	stage_id INT NOT NULL,
+DROP TABLE IF EXISTS staff_schedule;
+CREATE TABLE staff_schedule (
+    schedule_id INT AUTO_INCREMENT PRIMARY KEY,
+    staff_id INT NOT NULL,
     event_id INT NOT NULL,
-	staff_id INT NOT NULL,
-	PRIMARY KEY (stage_id,event_id, staff_id),
-	FOREIGN KEY (stage_id) REFERENCES stage(stage_id),
-	FOREIGN KEY (staff_id) REFERENCES staff(staff_id)
+    role_id INT NOT NULL,
+    FOREIGN KEY (staff_id) REFERENCES staff(staff_id),
+    FOREIGN KEY (event_id) REFERENCES event(event_id) ON DELETE CASCADE,
+    FOREIGN KEY (role_id) REFERENCES staff_role(role_id)
 )ENGINE=InnoDB;
 
 CREATE TABLE genre (
