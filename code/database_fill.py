@@ -1,4 +1,5 @@
 import pymysql
+from pymysql.err import MySQLError
 import csv
 import pandas as pd
 
@@ -33,8 +34,8 @@ def _fill_from_csv(table, columns, csv_path):
                     clean = [None if cell == '' else cell for cell in row]
                     cur.execute(sql, clean)
                     conn.commit()   # commit *before* closing
-                except Exception as l:
-                    print(f"Error in row", row)
+                except MySQLError as l:
+                    print(f"MySQL error: {l}")
                     continue
     except Exception as e:
         print(f"Error populating {table}:", e)
@@ -61,8 +62,8 @@ def _fill_from_csv_seller_queue(table, columns, csv_path):
                     # Κλήση stored procedure για κάθε γραμμή
                     cur.callproc('insert_into_seller_queue', (int(owner_id),int(ticket_id)))
                     conn.commit()   # commit *before* closing
-                except Exception as l:
-                    print(f"Error in row", row)
+                except MySQLError as l:
+                    print(f"MySQL error: {l}")
                     continue
     except Exception as e:
         print(f"Error populating {table}:", e)
