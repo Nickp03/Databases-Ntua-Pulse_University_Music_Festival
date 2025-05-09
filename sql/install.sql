@@ -1138,3 +1138,23 @@ END;
 //
 
 DELIMITER ;
+
+DELIMITER //
+CREATE TRIGGER correct_event_date
+BEFORE INSERT ON event
+FOR EACH ROW
+BEGIN
+	DECLARE festival_start_date DATE;
+    DECLARE festival_end_date DATE;
+    
+    SELECT start_date,end_date
+    INTO festival_start_date,festival_end_date
+    FROM festival
+    WHERE (festival_id=new.festival_id);
+    
+    IF(festival_start_date>new.event_date or festival_end_date<new.event_date) THEN 
+		SET @msg = 'Invalid event date';
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = @msg;
+	END IF;
+END //
+DELIMITER ;
