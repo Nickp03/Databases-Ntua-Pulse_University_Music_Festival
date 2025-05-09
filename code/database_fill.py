@@ -26,12 +26,16 @@ def _fill_from_csv(table, columns, csv_path):
             reader = csv.reader(f)
             next(reader)  # skip header
             for row in reader:
-                if len(row) != len(columns):
+                try:
+                    if len(row) != len(columns):
+                        continue
+                    # Convert '' → None so MySQL sees NULL, not an invalid integer
+                    clean = [None if cell == '' else cell for cell in row]
+                    cur.execute(sql, clean)
+                    conn.commit()   # commit *before* closing
+                except Exception as l:
+                    print(f"Error in row", row)
                     continue
-                # Convert '' → None so MySQL sees NULL, not an invalid integer
-                clean = [None if cell == '' else cell for cell in row]
-                cur.execute(sql, clean)
-                conn.commit()   # commit *before* closing
     except Exception as e:
         print(f"Error populating {table}:", e)
     finally:
@@ -51,11 +55,15 @@ def _fill_from_csv_seller_queue(table, columns, csv_path):
         with open('seller_queue.csv', mode='r', encoding='utf-8') as f:
             reader = csv.DictReader(f)
             for row in reader:
-                owner_id=row['Owner_id']
-                ticket_id=row['Ticket_id']
-                # Κλήση stored procedure για κάθε γραμμή
-                cur.callproc('insert_into_seller_queue', (int(owner_id),int(ticket_id)))
-                conn.commit()   # commit *before* closing
+                try:
+                    owner_id=row['Owner_id']
+                    ticket_id=row['Ticket_id']
+                    # Κλήση stored procedure για κάθε γραμμή
+                    cur.callproc('insert_into_seller_queue', (int(owner_id),int(ticket_id)))
+                    conn.commit()   # commit *before* closing
+                except Exception as l:
+                    print(f"Error in row", row)
+                    continue
     except Exception as e:
         print(f"Error populating {table}:", e)
     finally:
