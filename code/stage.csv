@@ -1,6 +1,6 @@
 name,description,max_capacity,equipment
 Main Stage,Central stage,100,"speakers,lights"
-Second Stage,Secondary stage,100,speakers
+Second Stage,Secondary stage,20,speakers
 Acoustic Tent,Unplugged performances,200,basic sound
 Electronic Dome,EDM DJs,150,"DJ booth, lights"
 Open Air,Outdoor area,100,"speakers,stage lights"
