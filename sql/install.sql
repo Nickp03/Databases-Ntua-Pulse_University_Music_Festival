@@ -1085,6 +1085,46 @@ BEGIN
 END$$
 
 DELIMITER ;
+DELIMITER $$
+
+CREATE PROCEDURE assign_tech_to_event(IN in_event_id INT)
+BEGIN
+  DECLARE tech_role_id INT;
+  DECLARE current_tech INT DEFAULT 0;
+  DECLARE available_staff_id INT;
+
+  
+  SELECT role_id INTO tech_role_id
+  FROM staff_role
+  WHERE role_name = 'technician';
+
+  SELECT COUNT(*) INTO current_tech
+  FROM staff_schedule ss
+  JOIN staff s ON ss.staff_id = s.staff_id
+  WHERE ss.event_id = in_event_id AND s.role_id = tech_role_id;
+
+  IF current_tech = 0 THEN
+    SELECT s.staff_id INTO available_staff_id
+    FROM staff s
+    WHERE s.role_id = tech_role_id
+      AND s.staff_id NOT IN (
+        SELECT ss.staff_id
+        FROM staff_schedule ss
+        JOIN event e2 ON ss.event_id = e2.event_id
+        JOIN event e1 ON e1.event_id = in_event_id
+        WHERE e2.event_date = e1.event_date
+      )
+    LIMIT 1;
+
+    IF available_staff_id IS NOT NULL THEN
+      INSERT INTO staff_schedule (staff_id, event_id, role_id)
+      VALUES (available_staff_id, in_event_id, tech_role_id);
+    END IF;
+  END IF;
+END$$
+
+DELIMITER ;
+
 
 DELIMITER //
 
@@ -1094,6 +1134,7 @@ FOR EACH ROW
 BEGIN
   CALL assign_security_to_event(NEW.event_id);
   CALL assign_support_to_event(NEW.event_id);
+  CALL assign_tech_to_event(NEW.event_id);
 END;
 //
 
