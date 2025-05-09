@@ -279,7 +279,7 @@ CREATE TABLE review_summary (-- Extra table to have per-performance reviews
 CREATE INDEX review_perf ON review(performance_id);
 CREATE INDEX review_ticket ON review(ticket_id);
 CREATE INDEX review_perf_date ON review(performance_id, review_date);
-CREATE INDEX perf_datetime ON performance(perf_datetime);
+CREATE INDEX perf_time ON performance(perf_time);
 
 -- Trigger to ensure that an owner/ticket can only review a performance once
 
@@ -376,18 +376,18 @@ BEGIN
 	IF EXISTS(
 		SELECT 1
 		FROM performance
-		WHERE event_id=NEW.event_id AND perf_datetime<NEW.perf_datetime + INTERVAL NEW.duration MINUTE 
-			AND NEW.perf_datetime<perf_datetime + INTERVAL duration MINUTE) THEN
+		WHERE event_id=NEW.event_id AND perf_time<NEW.perf_time + INTERVAL NEW.duration MINUTE 
+			AND NEW.perf_time<perf_time + INTERVAL duration MINUTE) THEN
 			SIGNAL SQLSTATE '45000'
 			SET MESSAGE_TEXT = 'Performance overlaps another in the same event';
 	END IF;
 -- Enforce a 5-30 minute break
-	SELECT MAX(perf_datetime + INTERVAL duration MINUTE)
+	SELECT MAX(perf_time + INTERVAL duration MINUTE)
     INTO previous_end
     FROM performance
     WHERE event_id=NEW.event_id;
     IF previous_end IS NOT NULL THEN
-		SET gap=TIMESTAMPDIFF(MINUTE,previous_end,NEW.perf_datetime);
+		SET gap=TIMESTAMPDIFF(MINUTE,previous_end,NEW.perf_time);
         IF gap<5 OR gap>30 THEN
 			SIGNAL SQLSTATE '45000'
 			SET MESSAGE_TEXT = 'Break between performances must be between 5 and 30 minutes';
