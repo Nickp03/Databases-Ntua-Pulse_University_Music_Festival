@@ -121,11 +121,12 @@ def fill_perf_kind(): _fill_from_csv('perf_kind',
     'perf_kind.csv')
 
 def fill_perf_type(): _fill_from_csv('perf_type',
+                                     
     ['type_name'],
     'perf_type.csv')
 
 def fill_performance(): _fill_from_csv('performance',
-    ['perf_datetime','duration','kind_id','type_id','artist_id','band_id','event_id'],
+    ['perf_time','duration','kind_id','type_id','artist_id','band_id','event_id'],
     'performance.csv')
 
 def fill_payment_method(): _fill_from_csv('payment_method',
