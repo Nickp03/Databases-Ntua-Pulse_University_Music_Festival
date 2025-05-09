@@ -1030,6 +1030,62 @@ END$$
 
 DELIMITER ;
 
+DELIMITER $$
+
+CREATE PROCEDURE assign_support_to_event(IN in_event_id INT)
+BEGIN
+  DECLARE support_role_id INT;
+  DECLARE required_support INT DEFAULT 0;
+  DECLARE current_support INT DEFAULT 0;
+  DECLARE missing_support INT DEFAULT 0;
+  DECLARE available_staff_id INT;
+  DECLARE stage_id_val INT;
+
+  SELECT role_id INTO support_role_id
+  FROM staff_role
+  WHERE role_name = 'support';
+
+  SELECT stage_id INTO stage_id_val
+  FROM event
+  WHERE event_id = in_event_id;
+
+  SELECT CEIL(s.max_capacity * 0.02) INTO required_support
+  FROM stage s
+  WHERE s.stage_id = stage_id_val;
+
+  SELECT COUNT(*) INTO current_support
+  FROM staff_schedule ss
+  JOIN staff s ON ss.staff_id = s.staff_id
+  WHERE ss.event_id = in_event_id AND s.role_id = support_role_id;
+
+  SET missing_support = required_support - current_support;
+
+  WHILE missing_support > 0 DO
+    SELECT s.staff_id INTO available_staff_id
+    FROM staff s
+    WHERE s.role_id = support_role_id
+      AND s.staff_id NOT IN (
+        SELECT ss.staff_id
+        FROM staff_schedule ss
+        JOIN event e2 ON ss.event_id = e2.event_id
+        JOIN event e1 ON e1.event_id = in_event_id
+        WHERE e2.event_date = e1.event_date
+      )
+    LIMIT 1;
+
+    IF available_staff_id IS NOT NULL THEN
+      INSERT INTO staff_schedule (staff_id, event_id, role_id)
+      VALUES (available_staff_id, in_event_id, support_role_id);
+
+      SET missing_support = missing_support - 1;
+    ELSE
+      SET missing_support = 0;
+    END IF;
+  END WHILE;
+END$$
+
+DELIMITER ;
+
 DELIMITER //
 
 CREATE TRIGGER trigger_check_security_on_event
