@@ -92,9 +92,9 @@ def fill_staff(): _fill_from_csv('staff',
     ['name','age','role_id','level_id'],
     'staff.csv')
 
-def fill_stage_staff(): _fill_from_csv('stage_staff',
-    ['stage_id','event_id','staff_id'],
-    'stage_staff.csv')
+def fill_staff_schedule(): _fill_from_csv('staff_schedule',
+    ['staff_id','event_id','role_id'],
+    'staff_schedule.csv')
 
 def fill_genre(): _fill_from_csv('genre',
     ['genre_name'],
@@ -168,7 +168,7 @@ if __name__ == "__main__":
     fill_staff_role()
     fill_experience_level()
     fill_staff()
-    fill_stage_staff()
+    fill_staff_schedule()
     fill_genre()
     fill_subgenre()
     fill_artist()
