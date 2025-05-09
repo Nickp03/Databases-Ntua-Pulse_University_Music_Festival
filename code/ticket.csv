@@ -1,7 +1,6 @@
 ticket_category,purchase_date,cost,method_of_purchase,activated,event_id,owner_id
 VIP,2026-06-23 15:00:00,100,paypal,0,17,4
 VIP,2026-06-06 15:00:00,100,paypal,0,5,1
-general_entry,2026-06-28 14:00:00,50,paypal,0,6,4
 VIP,2026-06-15 12:00:00,100,paypal,0,20,2
 VIP,2026-06-19 10:00:00,100,paypal,0,5,10
 general_entry,2027-06-23 18:00:00,50,credit,0,1,2
@@ -26,3 +25,24 @@ backstage,2028-06-12 18:00:00,150,paypal,0,14,4
 backstage,2028-06-13 14:00:00,150,cash,0,7,10
 general_entry,2028-06-03 16:00:00,50,credit,0,11,2
 backstage,2029-06-12 18:00:00,150,cash,0,12,1
+general_entry,2026-06-28 14:00:00,50,paypal,0,6,1
+VIP,2026-06-28 14:00:00,50,paypal,0,6,2
+VIP,2026-06-28 14:00:00,50,paypal,0,6,3
+VIP,2026-06-28 14:00:00,50,paypal,0,6,4
+general_entry,2026-06-28 14:00:00,50,paypal,0,6,5
+general_entry,2026-06-28 14:00:00,50,paypal,0,6,6
+general_entry,2026-06-28 14:00:00,50,paypal,0,6,7
+general_entry,2026-06-28 14:00:00,50,paypal,0,6,8
+general_entry,2026-06-28 14:00:00,50,paypal,0,6,9
+general_entry,2026-06-28 14:00:00,50,paypal,0,6,10
+general_entry,2026-06-28 14:00:00,50,paypal,0,6,11
+general_entry,2026-06-28 14:00:00,50,paypal,0,6,12
+general_entry,2026-06-28 14:00:00,50,paypal,0,6,13
+general_entry,2026-06-28 14:00:00,50,paypal,0,6,14
+general_entry,2026-06-28 14:00:00,50,paypal,0,6,15
+general_entry,2026-06-28 14:00:00,50,paypal,0,6,16
+general_entry,2026-06-28 14:00:00,50,paypal,0,6,17
+general_entry,2026-06-28 14:00:00,50,paypal,0,6,18
+general_entry,2026-06-28 14:00:00,50,paypal,0,6,19
+general_entry,2026-06-28 14:00:00,50,paypal,0,6,20
+general_entry,2026-06-28 14:00:00,50,paypal,0,6,21
