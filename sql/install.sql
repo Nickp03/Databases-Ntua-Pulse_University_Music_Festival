@@ -1172,7 +1172,7 @@ BEGIN
     FROM event
     WHERE (event_id=new.event_id);
     
-    IF(event_start_time>new.perf_time or event_end_time<DATE_ADD(new.perf_time, INTERVAL new.duration HOUR) or event_end_time<=new.perf_time) THEN 
+    IF(event_start_time>new.perf_time or event_end_time<DATE_ADD(new.perf_time, INTERVAL new.duration MINUTE) or event_end_time<=new.perf_time) THEN 
 		SET @msg = 'Invalid performance time or performance duration';
 		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = @msg;
 	END IF;
