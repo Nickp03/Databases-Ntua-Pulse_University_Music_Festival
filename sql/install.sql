@@ -143,13 +143,13 @@ CREATE TABLE perf_type (
 
 CREATE TABLE IF NOT EXISTS performance (
     performance_id INT PRIMARY KEY AUTO_INCREMENT,
-    perf_datetime DATETIME NOT NULL,
+    perf_time TIME NOT NULL,
     duration INT NOT NULL,
     kind_id INT NOT NULL,
     type_id INT NOT NULL,
     artist_id INT,
     band_id INT,
-    event_id INT,
+    event_id INT NOT NULL,
     CONSTRAINT check_duration CHECK (duration BETWEEN 1 AND 180),
     CONSTRAINT check_artist_or_band CHECK ((artist_id IS NOT NULL AND band_id IS NULL) OR (artist_id IS NULL AND band_id IS NOT NULL)),
     FOREIGN KEY (kind_id) REFERENCES perf_kind(kind_id),
@@ -415,7 +415,6 @@ END$$
 DELIMITER ;
 
 DELIMITER $$
-
 CREATE TRIGGER check_vip_ticket_limit
 BEFORE INSERT ON ticket
 FOR EACH ROW
