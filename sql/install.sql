@@ -1029,3 +1029,15 @@ BEGIN
 END$$
 
 DELIMITER ;
+
+DELIMITER //
+
+CREATE TRIGGER trigger_check_security_on_event
+AFTER INSERT ON event
+FOR EACH ROW
+BEGIN
+  CALL assign_security_to_event(NEW.event_id);
+END;
+//
+
+DELIMITER ;
