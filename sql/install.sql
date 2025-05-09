@@ -193,7 +193,6 @@ CREATE TABLE  IF NOT EXISTS ticket (
     event_id INT NOT NULL,
     owner_id INT NOT NULL,
     CONSTRAINT no_double_tickets_per_event UNIQUE (owner_id,event_id), -- one ticket/event per owner
-    CONSTRAINT distict_categories CHECK( ticket_category= 'general_entry' OR ticket_category='VIP' OR ticket_category='backstage'),
     FOREIGN KEY (owner_id) REFERENCES owner(owner_id) ON DELETE CASCADE,
     FOREIGN KEY (event_id) REFERENCES event(event_id) ON DELETE CASCADE,
     FOREIGN KEY (ticket_category) REFERENCES ticket_category(cat_name),
