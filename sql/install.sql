@@ -604,8 +604,8 @@ END//
 
 delimiter ;
 
--- check if event is old 
-delimiter //
+-- check if event is old //This trigger is logically necessary but fot the purposes of the exercise it is deleted(old data insertion)
+/*delimiter //
 CREATE TRIGGER time_of_event
 BEFORE INSERT ON ticket
 FOR EACH ROW
@@ -633,7 +633,7 @@ BEGIN
         
 	END IF;
 END//
-delimiter ;
+delimiter ;*/
 
 -- AUTOSELL
 -- INSERT BUYER
