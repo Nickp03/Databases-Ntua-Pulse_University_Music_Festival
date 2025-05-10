@@ -113,7 +113,7 @@ def _fill_from_csv_seller_queue(table, columns, csv_path):
 
 # Fill functions for each table
 def fill_location(): _fill_from_csv('location',
-    ['address','latitude','longitude','city','country','continent'],
+    ['address','latitude','longitude','city','country','continent','image'],
     'location.csv')
 
 def fill_festival(): _fill_from_csv('festival',

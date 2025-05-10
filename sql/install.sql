@@ -13,8 +13,8 @@ CREATE TABLE location (
 	longitude DECIMAL(11,8) NOT NULL,
 	city VARCHAR(100) NOT NULL,
 	country VARCHAR(100) NOT NULL,
-	continent VARCHAR(100) NOT NULL
-    -- location_image BLOB NULL DEFAULT NULL
+	continent VARCHAR(100) NOT NULL,
+    image BLOB NULL DEFAULT NULL
 )ENGINE=InnoDB;
 
 DROP TABLE IF EXISTS festival;
