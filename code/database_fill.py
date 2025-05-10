@@ -96,8 +96,8 @@ def _fill_from_csv_seller_queue(table, columns, csv_path):
             reader = csv.DictReader(f)
             for row in reader:
                 try:
-                    owner_id=row['Owner_id']
-                    ticket_id=row['Ticket_id']
+                    owner_id=row['seller_id']
+                    ticket_id=row['ticket_id']
                     # Κλήση stored procedure για κάθε γραμμή
                     cur.callproc('insert_into_seller_queue', (int(owner_id),int(ticket_id)))
                     conn.commit()   # commit *before* closing
@@ -230,7 +230,7 @@ if __name__ == "__main__":
     fill_ticket_category()
     fill_ticket()
     fill_buyer()
-    #fill_seller_queue()
-    #fill_buyer_queue()
-    #fill_review()
+    fill_seller_queue()
+    fill_buyer_queue()
+    fill_review()
     print("All tables populated.")
