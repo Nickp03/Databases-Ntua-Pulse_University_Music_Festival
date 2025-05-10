@@ -45,6 +45,8 @@ def _fill_from_csv_image(table, columns, csv_path):
                 except MySQLError as l:
                     print(f"MySQL error: {l}")
                     continue
+                except Exception:
+                    continue
     except Exception as e:
         print(f"Error populating {table}:", e)
     finally:
