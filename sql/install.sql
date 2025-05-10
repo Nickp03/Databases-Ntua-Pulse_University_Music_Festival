@@ -24,7 +24,7 @@ CREATE TABLE festival (
 	start_date DATE NOT NULL,
 	end_date DATE NOT NULL,
 	location_id INT NOT NULL,
-    festival_image BLOB NULL DEFAULT NULL
+    festival_image BLOB NULL DEFAULT NULL,
 	CONSTRAINT chk_festival_dates CHECK (start_date <= end_date),
     CONSTRAINT chk_year CHECK (year=YEAR(start_date)),
 	FOREIGN KEY (location_id) REFERENCES location(location_id)
@@ -72,7 +72,7 @@ CREATE TABLE staff (
 	age INT NOT NULL,
 	role_id INT NOT NULL,
     level_id INT NOT NULL,
-    staff_image BLOB NULL DEFAULT NULL
+    staff_image BLOB NULL DEFAULT NULL,
 	CONSTRAINT check_age CHECK (age > 0),
     FOREIGN KEY (role_id) REFERENCES staff_role(role_id),
 	FOREIGN KEY (level_id) REFERENCES experience_level(level_id)
@@ -199,7 +199,6 @@ CREATE TABLE  IF NOT EXISTS ticket (
     activated BOOLEAN DEFAULT FALSE,
     event_id INT NOT NULL,
     owner_id INT NOT NULL,
-    ticket_image BLOB NULL DEFAULT NULL,
     CONSTRAINT no_double_tickets_per_event UNIQUE (owner_id,event_id), -- one ticket/event per owner
     FOREIGN KEY (owner_id) REFERENCES owner(owner_id) ON DELETE CASCADE,
     FOREIGN KEY (event_id) REFERENCES event(event_id) ON DELETE CASCADE,
@@ -216,7 +215,7 @@ CREATE TABLE IF NOT EXISTS buyer (
     method_of_purchase VARCHAR(12),
     payment_info VARCHAR(19) ,-- ΚΑΝΤΟ NOT NULL,
     number_of_desired_tickets INT DEFAULT 0,
-    buyer_image BLOB NULL DEFAULT NULL
+    buyer_image BLOB NULL DEFAULT NULL,
     CONSTRAINT check_age CHECK (age >= 18),
     FOREIGN KEY (method_of_purchase) REFERENCES payment_method(pm_name)
 )ENGINE=InnoDB;

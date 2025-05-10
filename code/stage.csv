@@ -1,6 +1,31 @@
-name,description,max_capacity,equipment
-Main Stage,Central stage,100,"speakers,lights"
-Second Stage,Secondary stage,20,speakers
-Acoustic Tent,Unplugged performances,200,basic sound
-Electronic Dome,EDM DJs,150,"DJ booth, lights"
-Open Air,Outdoor area,100,"speakers,stage lights"
+stage_id,name,description,max_capacity,equipment,image
+1,Stage 1,Description for Stage 1,63,Standard equipment for Stage 1,stage_image_1.jpg
+2,Stage 2,Description for Stage 2,76,Standard equipment for Stage 2,stage_image_2.jpg
+3,Stage 3,Description for Stage 3,73,Standard equipment for Stage 3,stage_image_3.jpg
+4,Stage 4,Description for Stage 4,67,Standard equipment for Stage 4,stage_image_4.jpg
+5,Stage 5,Description for Stage 5,54,Standard equipment for Stage 5,stage_image_5.jpg
+6,Stage 6,Description for Stage 6,81,Standard equipment for Stage 6,stage_image_6.jpg
+7,Stage 7,Description for Stage 7,65,Standard equipment for Stage 7,stage_image_7.jpg
+8,Stage 8,Description for Stage 8,94,Standard equipment for Stage 8,stage_image_8.jpg
+9,Stage 9,Description for Stage 9,93,Standard equipment for Stage 9,stage_image_9.jpg
+10,Stage 10,Description for Stage 10,73,Standard equipment for Stage 10,stage_image_10.jpg
+11,Stage 11,Description for Stage 11,60,Standard equipment for Stage 11,stage_image_11.jpg
+12,Stage 12,Description for Stage 12,54,Standard equipment for Stage 12,stage_image_12.jpg
+13,Stage 13,Description for Stage 13,79,Standard equipment for Stage 13,stage_image_13.jpg
+14,Stage 14,Description for Stage 14,56,Standard equipment for Stage 14,stage_image_14.jpg
+15,Stage 15,Description for Stage 15,86,Standard equipment for Stage 15,stage_image_15.jpg
+16,Stage 16,Description for Stage 16,68,Standard equipment for Stage 16,stage_image_16.jpg
+17,Stage 17,Description for Stage 17,50,Standard equipment for Stage 17,stage_image_17.jpg
+18,Stage 18,Description for Stage 18,79,Standard equipment for Stage 18,stage_image_18.jpg
+19,Stage 19,Description for Stage 19,81,Standard equipment for Stage 19,stage_image_19.jpg
+20,Stage 20,Description for Stage 20,55,Standard equipment for Stage 20,stage_image_20.jpg
+21,Stage 21,Description for Stage 21,63,Standard equipment for Stage 21,stage_image_21.jpg
+22,Stage 22,Description for Stage 22,75,Standard equipment for Stage 22,stage_image_22.jpg
+23,Stage 23,Description for Stage 23,64,Standard equipment for Stage 23,stage_image_23.jpg
+24,Stage 24,Description for Stage 24,61,Standard equipment for Stage 24,stage_image_24.jpg
+25,Stage 25,Description for Stage 25,74,Standard equipment for Stage 25,stage_image_25.jpg
+26,Stage 26,Description for Stage 26,75,Standard equipment for Stage 26,stage_image_26.jpg
+27,Stage 27,Description for Stage 27,58,Standard equipment for Stage 27,stage_image_27.jpg
+28,Stage 28,Description for Stage 28,78,Standard equipment for Stage 28,stage_image_28.jpg
+29,Stage 29,Description for Stage 29,85,Standard equipment for Stage 29,stage_image_29.jpg
+30,Stage 30,Description for Stage 30,73,Standard equipment for Stage 30,stage_image_30.jpg
