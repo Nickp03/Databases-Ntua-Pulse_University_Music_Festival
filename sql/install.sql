@@ -603,7 +603,7 @@ END//
 
 delimiter ;
 
--- check if event is old //This trigger is logically necessary but fot the purposes of the exercise it is deleted(old data insertion)
+-- check if event is old 
 delimiter //
 CREATE TRIGGER time_of_event
 BEFORE INSERT ON ticket
