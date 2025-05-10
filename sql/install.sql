@@ -878,7 +878,7 @@ BEGIN
     DECLARE max_capacity_now INT;
     DECLARE current_stage_id int;
     DECLARE today DATE;
-    DECLARE festivals_date DATE;
+    DECLARE events_date DATE;
     DECLARE current_festival_id INT;
     
     SET today=CURDATE();
@@ -900,17 +900,13 @@ BEGIN
 		WHERE ticket_id=for_sale_ticket_id;
         
         -- check if the ticket is old
-        SELECT festival_id
-		INTO current_festival_id
+    SELECT festival_id,event_date
+		INTO current_festival_id,events_date
 		FROM event
 		WHERE event_id=sell_event_id;
-    
-		SELECT start_date
-		INTO festivals_date
-		FROM festival
-		WHERE festival_id=current_festival_id;
+  
         
-		IF (today>festivals_date) THEN
+		IF (today>events_date) THEN
 			SET @msg = 'This event has passed therefore the tickets can not be sold';
 			SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = @msg;
 		END IF;
