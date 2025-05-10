@@ -1,21 +1,21 @@
-subgenre_id,subgenre_name,genre_id
-1,Alternative Rock,1
-2,Synthpop,2
-3,Smooth Jazz,3
-4,Trap,4
-5,Dubstep,5
-6,Dancehall,6
-7,Baroque,7
-8,Delta Blues,8
-9,Bluegrass,9
-10,Neo-Soul,10
-11,Death Metal,11
-12,Indie Folk,12
-13,Hardcore Punk,13
-14,P-Funk,14
-15,Motown,15
-16,Italo Disco,16
-17,Deep House,17
-18,Acid Techno,18
-19,Progressive Trance,19
-20,2 Tone,20
+subgenre_name,genre_id
+Alternative Rock,1
+Synthpop,2
+Smooth Jazz,3
+Trap,4
+Dubstep,5
+Dancehall,6
+Baroque,7
+Delta Blues,8
+Bluegrass,9
+Neo-Soul,10
+Death Metal,11
+Indie Folk,12
+Hardcore Punk,13
+P-Funk,14
+Motown,15
+Italo Disco,16
+Deep House,17
+Acid Techno,18
+Progressive Trance,19
+2 Tone,20
