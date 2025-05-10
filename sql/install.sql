@@ -616,15 +616,10 @@ BEGIN
     
     SET today=CURDATE();
 			
-	SELECT festival_id
-	INTO current_festival_id
+	SELECT event_date
+	INTO events_data
 	FROM event
 	WHERE event_id=NEW.event_id;
-    
-    SELECT start_date
-    INTO festivals_date
-    FROM festival
-    WHERE festival_id=current_festival_id;
     
     IF (today>festivals_date) THEN
 		SET @msg = 'This event has passed';
