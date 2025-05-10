@@ -900,8 +900,8 @@ BEGIN
 		WHERE ticket_id=for_sale_ticket_id;
         
         -- check if the ticket is old
-    SELECT festival_id,events_date
-		INTO current_festival_id
+    SELECT festival_id,event_date
+		INTO current_festival_id,events_date
 		FROM event
 		WHERE event_id=sell_event_id;
   
