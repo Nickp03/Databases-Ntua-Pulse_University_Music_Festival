@@ -211,7 +211,7 @@ CREATE TABLE IF NOT EXISTS buyer (
     first_name VARCHAR(20) NOT NULL,
     last_name VARCHAR(30) NOT NULL,
     age INT,
-	phone_number VARCHAR(13),-- +YY KK XX XX XX XX
+	phone_number VARCHAR(14),-- +YY KK XX XX XX XX
     method_of_purchase VARCHAR(12),
     payment_info VARCHAR(19) ,-- ΚΑΝΤΟ NOT NULL,
     number_of_desired_tickets INT DEFAULT 0,
