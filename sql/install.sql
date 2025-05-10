@@ -199,7 +199,6 @@ CREATE TABLE  IF NOT EXISTS ticket (
     activated BOOLEAN DEFAULT FALSE,
     event_id INT NOT NULL,
     owner_id INT NOT NULL,
-    ticket_image BLOB NULL DEFAULT NULL,
     CONSTRAINT no_double_tickets_per_event UNIQUE (owner_id,event_id), -- one ticket/event per owner
     FOREIGN KEY (owner_id) REFERENCES owner(owner_id) ON DELETE CASCADE,
     FOREIGN KEY (event_id) REFERENCES event(event_id) ON DELETE CASCADE,
