@@ -13,7 +13,8 @@ CREATE TABLE location (
 	longitude DECIMAL(11,8) NOT NULL,
 	city VARCHAR(100) NOT NULL,
 	country VARCHAR(100) NOT NULL,
-	continent VARCHAR(100) NOT NULL
+	continent VARCHAR(100) NOT NULL,
+    location_image BLOB NULL DEFAULT NULL
 )ENGINE=InnoDB;
 
 DROP TABLE IF EXISTS festival;
@@ -23,6 +24,7 @@ CREATE TABLE festival (
 	start_date DATE NOT NULL,
 	end_date DATE NOT NULL,
 	location_id INT NOT NULL,
+    festival_image BLOB NULL DEFAULT NULL
 	CONSTRAINT chk_festival_dates CHECK (start_date <= end_date),
     CONSTRAINT chk_year CHECK (year=YEAR(start_date)),
 	FOREIGN KEY (location_id) REFERENCES location(location_id)
@@ -34,7 +36,8 @@ CREATE TABLE stage (
     name VARCHAR(100) NOT NULL,
     description TEXT,
     max_capacity INT NOT NULL,
-    equipment TEXT
+    equipment TEXT,
+    stage_image BLOB NULL DEFAULT NULL
 )ENGINE=InnoDB;
 
 DROP TABLE IF EXISTS event;
@@ -69,6 +72,7 @@ CREATE TABLE staff (
 	age INT NOT NULL,
 	role_id INT NOT NULL,
     level_id INT NOT NULL,
+    staff_image BLOB NULL DEFAULT NULL
 	CONSTRAINT check_age CHECK (age > 0),
     FOREIGN KEY (role_id) REFERENCES staff_role(role_id),
 	FOREIGN KEY (level_id) REFERENCES experience_level(level_id)
@@ -107,6 +111,7 @@ CREATE TABLE IF NOT EXISTS artist(
     subgenre_id INT NOT NULL,
     website VARCHAR(77),
     instagram VARCHAR(30),
+    artist_image BLOB NULL DEFAULT NULL,
     FOREIGN KEY (genre_id) REFERENCES genre(genre_id),
     FOREIGN KEY (subgenre_id) REFERENCES subgenre(subgenre_id)
 )ENGINE=InnoDB;
@@ -119,6 +124,7 @@ CREATE TABLE IF NOT EXISTS band (
     instagram VARCHAR(30),
     genre_id INT NOT NULL, 
     subgenre_id INT NOT NULL,
+    band_image BLOB NULL DEFAULT NULL,
     FOREIGN KEY (genre_id) REFERENCES genre(genre_id),
     FOREIGN KEY (subgenre_id) REFERENCES subgenre(subgenre_id)
 )ENGINE=InnoDB;
@@ -173,6 +179,7 @@ CREATE TABLE IF NOT EXISTS owner (
     method_of_purchase VARCHAR(12),
     payment_info VARCHAR(19), -- 16 digit card info + CVC --KANTO NOT NULL
     total_charge DECIMAL(6,2) DEFAULT 0,
+    owner_image BLOB NULL DEFAULT NULL,
     CONSTRAINT check_age CHECK (age >= 18),
     CONSTRAINT critical_info UNIQUE (first_name,last_name,phone_number),
     FOREIGN KEY (method_of_purchase) REFERENCES payment_method(pm_name)
@@ -192,6 +199,7 @@ CREATE TABLE  IF NOT EXISTS ticket (
     activated BOOLEAN DEFAULT FALSE,
     event_id INT NOT NULL,
     owner_id INT NOT NULL,
+    ticket_image BLOB NULL DEFAULT NULL,
     CONSTRAINT no_double_tickets_per_event UNIQUE (owner_id,event_id), -- one ticket/event per owner
     FOREIGN KEY (owner_id) REFERENCES owner(owner_id) ON DELETE CASCADE,
     FOREIGN KEY (event_id) REFERENCES event(event_id) ON DELETE CASCADE,
@@ -208,6 +216,7 @@ CREATE TABLE IF NOT EXISTS buyer (
     method_of_purchase VARCHAR(12),
     payment_info VARCHAR(19) ,-- ΚΑΝΤΟ NOT NULL,
     number_of_desired_tickets INT DEFAULT 0,
+    buyer_image BLOB NULL DEFAULT NULL
     CONSTRAINT check_age CHECK (age >= 18),
     FOREIGN KEY (method_of_purchase) REFERENCES payment_method(pm_name)
 )ENGINE=InnoDB;
