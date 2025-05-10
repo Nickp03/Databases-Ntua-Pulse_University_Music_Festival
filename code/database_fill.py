@@ -3,6 +3,11 @@ from pymysql.err import MySQLError
 import csv
 import pandas as pd
 
+def convert_data(file_name):
+    with open(file_name, 'rb') as file:
+        binary_data = file.read()
+    return binary_data
+
 # Function to connect to the database
 def connect():
     df = pd.read_csv('Credentials.csv', header=None)
