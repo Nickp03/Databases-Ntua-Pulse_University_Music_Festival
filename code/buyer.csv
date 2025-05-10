@@ -1,4 +1,4 @@
-buyer_id,first_name,last_name,age,phone_number,method_of_purchase,payment_info,number_of_desired_tickets,buyer_image
+buyer_id,first_name,last_name,age,phone_number,method_of_purchase,payment_info,number_of_desired_tickets,image
 1,Robin,Miller,55,+30 6982040301,debit,4706-4283-2760-8742,3,buyer_image_1.jpg
 2,Avery,Miller,27,+30 6921830430,bank_account,4312-4428-8302-6936,2,buyer_image_2.jpg
 3,Taylor,Smith,67,+30 6989067784,credit,4770-1173-2471-5237,2,buyer_image_3.jpg

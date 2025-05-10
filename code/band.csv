@@ -1,4 +1,4 @@
-band_id,band_name,date_of_creation,website,instagram,genre_id,subgenre_id,band_image
+band_id,band_name,date_of_creation,website,instagram,genre_id,subgenre_id,image
 1,The Dakotas,1985-06-20,https://thealexsband.com,@themorgans,20,20,band_image_1.jpg
 2,The Averys,1994-04-24,https://thejamiesband.com,@thecharlies,7,7,band_image_2.jpg
 3,The Robins,1980-03-10,https://thedakotasband.com,@thecaseys,20,20,band_image_3.jpg

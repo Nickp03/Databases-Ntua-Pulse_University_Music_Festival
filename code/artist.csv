@@ -1,4 +1,4 @@
-artist_id,artist_name,artist_lastname,stage_name,DOB,genre_id,subgenre_id,website,instagram,artist_image
+artist_id,artist_name,artist_lastname,stage_name,DOB,genre_id,subgenre_id,website,instagram,image
 1,Avery,Brown,Avery259,1961-03-20,1,1,https://avery259.com,@avery259,artist_image_1.jpg
 2,Avery,Brown,Avery548,1953-08-26,1,1,https://avery548.com,@avery548,artist_image_2.jpg
 3,Alex,Johnson,Alex949,1989-06-26,1,1,https://alex949.com,@alex949,artist_image_3.jpg

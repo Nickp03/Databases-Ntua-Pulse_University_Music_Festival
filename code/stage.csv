@@ -1,4 +1,4 @@
-stage_id,name,description,max_capacity,equipment,stage_image
+stage_id,name,description,max_capacity,equipment,image
 1,Stage 1,Description for Stage 1,63,Standard equipment for Stage 1,stage_image_1.jpg
 2,Stage 2,Description for Stage 2,76,Standard equipment for Stage 2,stage_image_2.jpg
 3,Stage 3,Description for Stage 3,73,Standard equipment for Stage 3,stage_image_3.jpg

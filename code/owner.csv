@@ -1,4 +1,4 @@
-owner_id,first_name,last_name,age,phone_number,method_of_purchase,payment_info,total_charge,owner_image
+owner_id,first_name,last_name,age,phone_number,method_of_purchase,payment_info,total_charge,image
 1,Jordan,Johnson,19,+30 6974080673,bank_account,4883-9968-1653-2805,0.0,owner_image_1.jpg
 2,Morgan,Garcia,63,+30 6921267534,bank_account,4833-2126-9040-5696,0.0,owner_image_2.jpg
 3,Avery,Miller,24,+30 6965438040,credit,4826-9495-3734-6669,0.0,owner_image_3.jpg
