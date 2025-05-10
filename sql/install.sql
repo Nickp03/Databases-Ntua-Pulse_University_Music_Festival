@@ -604,30 +604,29 @@ END//
 delimiter ;
 
 -- check if event is old //This trigger is logically necessary but fot the purposes of the exercise it is deleted(old data insertion)
-/*delimiter //
+delimiter //
 CREATE TRIGGER time_of_event
 BEFORE INSERT ON ticket
 FOR EACH ROW
 BEGIN
 
-	DECLARE festivals_date DATE;
-    DECLARE current_festival_id INT;
+	DECLARE events_date DATE;
     DECLARE today DATE;
     
-    SET today=CURDATE();
-			
+    SET today=NEW.purchase_date;
+	
 	SELECT event_date
-	INTO events_data
+	INTO events_date
 	FROM event
 	WHERE event_id=NEW.event_id;
     
-    IF (today>festivals_date) THEN
+    IF (today>events_date) THEN
 		SET @msg = 'This event has passed';
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = @msg;
         
 	END IF;
 END//
-delimiter ;*/
+delimiter ;
 
 -- AUTOSELL
 -- INSERT BUYER
