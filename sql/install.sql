@@ -604,7 +604,7 @@ END//
 delimiter ;
 
 -- check if event is old //This trigger is logically necessary but fot the purposes of the exercise it is deleted(old data insertion)
-/*delimiter //
+delimiter //
 CREATE TRIGGER time_of_event
 BEFORE INSERT ON ticket
 FOR EACH ROW
@@ -614,8 +614,8 @@ BEGIN
     DECLARE current_festival_id INT;
     DECLARE today DATE;
     
-    SET today=CURDATE();
-			
+    SET today=NEW.purchase_date;
+	
 	SELECT festival_id
 	INTO current_festival_id
 	FROM event
@@ -632,7 +632,7 @@ BEGIN
         
 	END IF;
 END//
-delimiter ;*/
+delimiter ;
 
 -- AUTOSELL
 -- INSERT BUYER
