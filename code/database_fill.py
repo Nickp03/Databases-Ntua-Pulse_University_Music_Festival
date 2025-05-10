@@ -20,12 +20,13 @@ def connect():
     return conn
 
 
-# Generic helper to fill tables from CSV
+# Generic helper to fill tables from CSV with images
 def _fill_from_csv_image(table, columns, csv_path):
-    placeholders = ", ".join(["%s"] * len(columns))
-    cols         = ", ".join(columns)
-    sql          = f"INSERT INTO {table} ({cols}) VALUES ({placeholders})"
-    conn         = connect()
+    all_cols = columns + ['image']
+    placeholders = ", ".join(["%s"] * len(all_cols))
+    cols = ", ".join(all_cols)
+    sql = f"INSERT INTO {table} ({cols}) VALUES ({placeholders})"
+    conn = connect()
     try:
         cur = conn.cursor()
         with open(csv_path, newline='', encoding='utf-8') as f:
@@ -33,19 +34,21 @@ def _fill_from_csv_image(table, columns, csv_path):
             next(reader) # skip header
             for row in reader:
                 try:
-                    if len(row) != len(columns):
+                    if len(row) != len(columns) + 1:
                         continue
                     # Convert '' → None so MySQL sees NULL, not an invalid integer
-                    clean = [None if cell == '' else cell for cell in row[len(columns)-1]]
+                    clean = [None if cell == '' else cell for cell in row]
+                    img = row[-1]
+                    try:
+                        bin_img = convert_data(img)
+                    except Exception as a:
+                        print(f"No image found")
+                        bin_image = None
+                    clean = [None if cell == '' else cell for cell in row]
                     cur.execute(sql, clean)
-                    sql2= f"INSERT INTO {table} (image) VALUES (%s)"
-                    image=convert_data(row[-1])
-                    cur.execute(sql2,image)
                     conn.commit()   # commit *before* closing
                 except MySQLError as l:
                     print(f"MySQL error: {l}")
-                    continue
-                except Exception:
                     continue
     except Exception as e:
         print(f"Error populating {table}:", e)
@@ -57,9 +60,9 @@ def _fill_from_csv_image(table, columns, csv_path):
 # Generic helper to fill tables from CSV
 def _fill_from_csv(table, columns, csv_path):
     placeholders = ", ".join(["%s"] * len(columns))
-    cols         = ", ".join(columns)
-    sql          = f"INSERT INTO {table} ({cols}) VALUES ({placeholders})"
-    conn         = connect()
+    cols = ", ".join(columns)
+    sql = f"INSERT INTO {table} ({cols}) VALUES ({placeholders})"
+    conn = connect()
     try:
         cur = conn.cursor()
         with open(csv_path, newline='', encoding='utf-8') as f:
@@ -86,9 +89,9 @@ def _fill_from_csv(table, columns, csv_path):
 # Helper to fill seller_queue from CSV
 def _fill_from_csv_seller_queue(table, columns, csv_path):
     placeholders = ", ".join(["%s"] * len(columns))
-    cols         = ", ".join(columns)
-    sql          = f"INSERT INTO {table} ({cols}) VALUES ({placeholders})"
-    conn         = connect()
+    cols = ", ".join(columns)
+    sql = f"INSERT INTO {table} ({cols}) VALUES ({placeholders})"
+    conn = connect()
     try:
         cur = conn.cursor()
         # Άνοιγμα και ανάγνωση του CSV
@@ -112,16 +115,16 @@ def _fill_from_csv_seller_queue(table, columns, csv_path):
         print(f"Finished {table}")
 
 # Fill functions for each table
-def fill_location(): _fill_from_csv('location',
-    ['address','latitude','longitude','city','country','continent','image'],
+def fill_location(): _fill_from_csv_image('location',
+    ['address','latitude','longitude','city','country','continent'],
     'location.csv')
 
-def fill_festival(): _fill_from_csv('festival',
-    ['year','start_date','end_date','location_id','image'],
+def fill_festival(): _fill_from_csv_image('festival',
+    ['year','start_date','end_date','location_id'],
     'festival.csv')
 
-def fill_stage(): _fill_from_csv('stage',
-    ['name','description','max_capacity','equipment','image'],
+def fill_stage(): _fill_from_csv_image('stage',
+    ['name','description','max_capacity','equipment'],
     'stage.csv')
 
 def fill_event(): _fill_from_csv('event',
@@ -136,8 +139,8 @@ def fill_experience_level(): _fill_from_csv('experience_level',
     ['level_name'],
     'experience_level.csv')
 
-def fill_staff(): _fill_from_csv('staff',
-    ['name','age','role_id','level_id','image'],
+def fill_staff(): _fill_from_csv_image('staff',
+    ['name','age','role_id','level_id'],
     'staff.csv')
 
 def fill_staff_schedule(): _fill_from_csv('staff_schedule',
@@ -152,12 +155,12 @@ def fill_subgenre(): _fill_from_csv('subgenre',
     ['subgenre_name','genre_id'],
     'subgenre.csv')
 
-def fill_artist(): _fill_from_csv('artist',
-    ['artist_name','artist_lastname','stage_name','DOB','genre_id','subgenre_id','website','instagram','image'],
+def fill_artist(): _fill_from_csv_image('artist',
+    ['artist_name','artist_lastname','stage_name','DOB','genre_id','subgenre_id','website','instagram'],
     'artist.csv')
 
-def fill_band(): _fill_from_csv('band',
-    ['band_name','date_of_creation','website','instagram','genre_id','subgenre_id','image'],
+def fill_band(): _fill_from_csv_image('band',
+    ['band_name','date_of_creation','website','instagram','genre_id','subgenre_id'],
     'band.csv')
 
 def fill_artist_band(): _fill_from_csv('artist_band',
@@ -180,8 +183,8 @@ def fill_payment_method(): _fill_from_csv('payment_method',
     ['pm_name'],
     'payment_method.csv')
 
-def fill_owner(): _fill_from_csv('owner',
-    ['first_name','last_name','age','phone_number','method_of_purchase','payment_info','total_charge','image'],
+def fill_owner(): _fill_from_csv_image('owner',
+    ['first_name','last_name','age','phone_number','method_of_purchase','payment_info','total_charge'],
     'owner.csv')
 
 def fill_ticket_category(): _fill_from_csv('ticket_category',
@@ -192,8 +195,8 @@ def fill_ticket(): _fill_from_csv('ticket',
     ['ticket_category','purchase_date','cost','method_of_purchase','activated','event_id','owner_id'],
     'ticket.csv')
 
-def fill_buyer(): _fill_from_csv('buyer',
-    ['first_name','last_name','age','phone_number','method_of_purchase','payment_info','number_of_desired_tickets','image'],
+def fill_buyer(): _fill_from_csv_image('buyer',
+    ['first_name','last_name','age','phone_number','method_of_purchase','payment_info','number_of_desired_tickets'],
     'buyer.csv')
 
 def fill_seller_queue(): _fill_from_csv_seller_queue('seller_queue',
