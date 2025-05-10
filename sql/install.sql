@@ -545,7 +545,7 @@ BEGIN
 			WHERE event_id=NEW.event_id);
             
 		IF events_capacity<max_capacity_now THEN 
-			SET @msg =('Tickets for this event are still available, therefore resell queue for this event is not activated',events_capacity);
+			SET @msg =(events_capacity);
 			SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = @msg;
 		END IF;
         
