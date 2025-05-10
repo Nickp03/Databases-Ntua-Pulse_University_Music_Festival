@@ -881,11 +881,9 @@ BEGIN
     DECLARE events_date DATE;
     DECLARE current_festival_id INT;
     
-    SET today=CURDATE();
-    
     -- check if owner and ticket pair valid
-	SELECT owner_id
-    INTO tickets_owner
+	SELECT owner_id,purchase_date
+    INTO tickets_owner,today
     FROM ticket
     WHERE ticket_id=for_sale_ticket_id;
     
