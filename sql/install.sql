@@ -514,7 +514,7 @@ BEGIN
 	DECLARE events_capacity INT;
     DECLARE max_capacity_now INT;
     DECLARE today DATE;
-    DECLARE festivals_date DATE;
+    DECLARE events_date DATE;
     DECLARE current_festival_id INT;
     
     IF (NEW.ticket_id IS NULL) THEN -- if event and ticket category where specified
@@ -527,16 +527,11 @@ BEGIN
         -- and therefore would not be available for purchase
         
 		SET today=CURDATE();
-        
-        SELECT festival_id
-		INTO current_festival_id
-		FROM event
-		WHERE event_id=NEW.event_id;
     
-		SELECT start_date
-		INTO festivals_date
-		FROM festival
-		WHERE festival_id=current_festival_id;
+		SELECT event_date
+		INTO events_date
+		FROM event
+		WHERE event_id=new.event_id;
         
 		IF (today>festivals_date) THEN
 			SET @msg = 'This event has passed therefore tickets for it are not sold';
