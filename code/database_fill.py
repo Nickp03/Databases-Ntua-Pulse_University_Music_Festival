@@ -31,7 +31,7 @@ def _fill_from_csv_image(table, columns, csv_path):
         with open(csv_path, newline='', encoding='utf-8') as f:
             reader = csv.reader(f)
             next(reader)  # skip header
-            for row in reader-1:
+            for row in reader:
                 try:
                     if len(row) != len(columns):
                         continue
@@ -42,7 +42,7 @@ def _fill_from_csv_image(table, columns, csv_path):
                 except MySQLError as l:
                     print(f"MySQL error: {l}")
                     continue
-            row=row+1
+            row=reader
             # Convert '' → None so MySQL sees NULL, not an invalid integer
             clean = [None if cell == '' else cell for cell in row]
             cur.execute(sql, convert_data(clean))
@@ -65,7 +65,7 @@ def _fill_from_csv(table, columns, csv_path):
         with open(csv_path, newline='', encoding='utf-8') as f:
             reader = csv.reader(f)
             next(reader)  # skip header
-            for row in reader-1:
+            for row in reader:
                 try:
                     if len(row) != len(columns):
                         continue
