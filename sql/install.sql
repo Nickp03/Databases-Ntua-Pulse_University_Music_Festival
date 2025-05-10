@@ -532,7 +532,7 @@ BEGIN
 		FROM event
 		WHERE event_id=new.event_id;
         
-		IF (today>festivals_date) THEN
+		IF (today>events_date) THEN
 			SET @msg = 'This event has passed therefore tickets for it are not sold';
 			SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = @msg;
 		END IF;	
