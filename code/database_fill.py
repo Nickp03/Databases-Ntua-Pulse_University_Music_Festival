@@ -231,6 +231,6 @@ if __name__ == "__main__":
     fill_ticket()
     fill_buyer()
     fill_seller_queue()
-    #fill_buyer_queue()
-    #fill_review()
+    fill_buyer_queue()
+    fill_review()
     print("All tables populated.")
