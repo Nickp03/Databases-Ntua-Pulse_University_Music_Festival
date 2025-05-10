@@ -161,7 +161,7 @@ def fill_band(): _fill_from_csv('band',
     'band.csv')
 
 def fill_artist_band(): _fill_from_csv('artist_band',
-    ['artist_id','band_id'],
+    ['band_id','artist_id'],
     'artist_band.csv')
 
 def fill_perf_kind(): _fill_from_csv('perf_kind',
@@ -197,7 +197,7 @@ def fill_buyer(): _fill_from_csv('buyer',
     'buyer.csv')
 
 def fill_seller_queue(): _fill_from_csv_seller_queue('seller_queue',
-    ['seller_id','interest_datetime','ticket_id','event_id','ticket_category','sold'],
+    ['seller_id','ticket_id'],
     'seller_queue.csv')
 
 def fill_buyer_queue(): _fill_from_csv('buyer_queue',
@@ -226,11 +226,3 @@ if __name__ == "__main__":
     fill_perf_type()
     fill_performance()
     fill_payment_method()
-    fill_owner()
-    fill_ticket_category()
-    fill_ticket()
-    fill_buyer()
-    fill_seller_queue()
-    fill_buyer_queue()
-    fill_review()
-    print("All tables populated.")
