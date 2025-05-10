@@ -21,7 +21,7 @@ def connect():
 
 
 # Generic helper to fill tables from CSV
-def _fill_from_csv(table, columns, csv_path):
+def _fill_from_csv_image(table, columns, csv_path):
     placeholders = ", ".join(["%s"] * len(columns))
     cols         = ", ".join(columns)
     sql          = f"INSERT INTO {table} ({cols}) VALUES ({placeholders})"
@@ -47,6 +47,35 @@ def _fill_from_csv(table, columns, csv_path):
             clean = [None if cell == '' else cell for cell in row]
             cur.execute(sql, convert_data(clean))
             conn.commit()   # commit *before* closing
+    except Exception as e:
+        print(f"Error populating {table}:", e)
+    finally:
+        cur.close()
+        conn.close()
+        print(f"Finished {table}")
+
+# Generic helper to fill tables from CSV
+def _fill_from_csv(table, columns, csv_path):
+    placeholders = ", ".join(["%s"] * len(columns))
+    cols         = ", ".join(columns)
+    sql          = f"INSERT INTO {table} ({cols}) VALUES ({placeholders})"
+    conn         = connect()
+    try:
+        cur = conn.cursor()
+        with open(csv_path, newline='', encoding='utf-8') as f:
+            reader = csv.reader(f)
+            next(reader)  # skip header
+            for row in reader-1:
+                try:
+                    if len(row) != len(columns):
+                        continue
+                    # Convert '' → None so MySQL sees NULL, not an invalid integer
+                    clean = [None if cell == '' else cell for cell in row]
+                    cur.execute(sql, clean)
+                    conn.commit()   # commit *before* closing
+                except MySQLError as l:
+                    print(f"MySQL error: {l}")
+                    continue
     except Exception as e:
         print(f"Error populating {table}:", e)
     finally:
