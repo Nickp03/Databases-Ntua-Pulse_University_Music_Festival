@@ -114,11 +114,11 @@ def fill_location(): _fill_from_csv('location',
     ['address','latitude','longitude','city','country','continent'],
     'location.csv')
 
-def fill_festival(): _fill_from_csv_image('festival',
+def fill_festival(): _fill_from_csv('festival',
     ['year','start_date','end_date','location_id','image'],
     'festival.csv')
 
-def fill_stage(): _fill_from_csv_image('stage',
+def fill_stage(): _fill_from_csv('stage',
     ['name','description','max_capacity','equipment','image'],
     'stage.csv')
 
@@ -134,7 +134,7 @@ def fill_experience_level(): _fill_from_csv('experience_level',
     ['level_name'],
     'experience_level.csv')
 
-def fill_staff(): _fill_from_csv_image('staff',
+def fill_staff(): _fill_from_csv('staff',
     ['name','age','role_id','level_id','image'],
     'staff.csv')
 
@@ -150,11 +150,11 @@ def fill_subgenre(): _fill_from_csv('subgenre',
     ['subgenre_name','genre_id'],
     'subgenre.csv')
 
-def fill_artist(): _fill_from_csv_image('artist',
+def fill_artist(): _fill_from_csv('artist',
     ['artist_name','artist_lastname','stage_name','DOB','genre_id','subgenre_id','website','instagram','image'],
     'artist.csv')
 
-def fill_band(): _fill_from_csv_image('band',
+def fill_band(): _fill_from_csv('band',
     ['band_name','date_of_creation','website','instagram','genre_id','subgenre_id','image'],
     'band.csv')
 
@@ -178,7 +178,7 @@ def fill_payment_method(): _fill_from_csv('payment_method',
     ['pm_name'],
     'payment_method.csv')
 
-def fill_owner(): _fill_from_csv_image('owner',
+def fill_owner(): _fill_from_csv('owner',
     ['first_name','last_name','age','phone_number','method_of_purchase','payment_info','total_charge','image'],
     'owner.csv')
 
@@ -190,7 +190,7 @@ def fill_ticket(): _fill_from_csv('ticket',
     ['ticket_category','purchase_date','cost','method_of_purchase','activated','event_id','owner_id'],
     'ticket.csv')
 
-def fill_buyer(): _fill_from_csv_image('buyer',
+def fill_buyer(): _fill_from_csv('buyer',
     ['first_name','last_name','age','phone_number','method_of_purchase','payment_info','number_of_desired_tickets','image'],
     'buyer.csv')
 
