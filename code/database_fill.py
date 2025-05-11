@@ -127,7 +127,7 @@ def _dump_from_csv(table, columns, csv_path, dump_path):
                 if len(row) != len(columns):
                     continue
                 clean = [None if cell == "" else cell for cell in row]
-                full_sql = cur.mogrify(sql, clean).decode("utf-8") + ";"
+                full_sql = cur.mogrify(sql, clean) + ";"
                 dump.write(full_sql + "\n")
     cur.close()
     conn.close()
@@ -154,7 +154,7 @@ def _dump_from_csv_image(table, columns, csv_path, dump_path):
                 except Exception as a:
                     bin_img = None
                 data_cols = clean + [bin_img]
-                full_sql = cur.mogrify(sql, data_cols).decode("utf-8") + ";"
+                full_sql = cur.mogrify(sql, data_cols) + ";"
                 dump.write(full_sql + "\n")
     cur.close()
     conn.close()
@@ -261,122 +261,122 @@ def fill_review(): _fill_from_csv('review',
 def dump_location(): _dump_from_csv_image('location',
     ['address','latitude','longitude','city','country','continent'],
     'location.csv',
-    'Databases-Ntua-Pulse_Music_Festival/sql/load.sql')
+    '../sql/load.sql')
 
 def dump_festival(): _dump_from_csv_image('festival',
     ['year','start_date','end_date','location_id'],
     'festival.csv',
-    'Databases-Ntua-Pulse_Music_Festival/sql/load.sql')
+    '../sql/load.sql')
 
 def dump_stage(): _dump_from_csv_image('stage',
     ['name','description','max_capacity','equipment'],
     'stage.csv',
-    'Databases-Ntua-Pulse_Music_Festival/sql/load.sql')
+    '../sql/load.sql')
 
 def dump_event(): _dump_from_csv('event',
     ['festival_id','stage_id','event_date','start_time','end_time'],
     'event.csv',
-    'Databases-Ntua-Pulse_Music_Festival/sql/load.sql')
+    '../sql/load.sql')
     
 def dump_staff_role(): _dump_from_csv('staff_role',
     ['role_name'],
     'staff_role.csv',
-    'Databases-Ntua-Pulse_Music_Festival/sql/load.sql')
+    '../sql/load.sql')
 
 def dump_experience_level(): _dump_from_csv('experience_level',
     ['level_name'],
     'experience_level.csv',
-    'Databases-Ntua-Pulse_Music_Festival/sql/load.sql')
+    '../sql/load.sql')
 
 def dump_staff(): _dump_from_csv_image('staff',
     ['name','age','role_id','level_id'],
     'staff.csv',
-    'Databases-Ntua-Pulse_Music_Festival/sql/load.sql')
+    '../sql/load.sql')
 
 def dump_staff_schedule(): _dump_from_csv('staff_schedule',
     ['staff_id','event_id','role_id'],
     'staff_schedule.csv',
-    'Databases-Ntua-Pulse_Music_Festival/sql/load.sql')
+    '../sql/load.sql')
 
 def dump_genre(): _dump_from_csv('genre',
     ['genre_name'],
     'genre.csv',
-    'Databases-Ntua-Pulse_Music_Festival/sql/load.sql')
+    '../sql/load.sql')
 
 def dump_subgenre(): _dump_from_csv('subgenre',
     ['subgenre_name','genre_id'],
     'subgenre.csv',
-    'Databases-Ntua-Pulse_Music_Festival/sql/load.sql')
+    '../sql/load.sql')
 
 def dump_artist(): _dump_from_csv_image('artist',
     ['artist_name','artist_lastname','stage_name','DOB','genre_id','subgenre_id','website','instagram'],
     'artist.csv',
-    'Databases-Ntua-Pulse_Music_Festival/sql/load.sql')
+    '../sql/load.sql')
 
 def dump_band(): _dump_from_csv_image('band',
     ['band_name','date_of_creation','website','instagram','genre_id','subgenre_id'],
     'band.csv',
-    'Databases-Ntua-Pulse_Music_Festival/sql/load.sql')
+    '../sql/load.sql')
 
 def dump_artist_band(): _dump_from_csv('artist_band',
     ['band_id','artist_id'],
     'artist_band.csv',
-    'Databases-Ntua-Pulse_Music_Festival/sql/load.sql')
+    '../sql/load.sql')
 
 def dump_perf_kind(): _dump_from_csv('perf_kind',
     ['kind_name'],
     'perf_kind.csv',
-    'Databases-Ntua-Pulse_Music_Festival/sql/load.sql')
+    '../sql/load.sql')
     
 def dump_perf_type(): _dump_from_csv('perf_type',                               
     ['type_name'],
     'perf_type.csv',
-    'Databases-Ntua-Pulse_Music_Festival/sql/load.sql')
+    '../sql/load.sql')
 
 def dump_performance(): _dump_from_csv('performance',
     ['perf_time','duration','kind_id','type_id','artist_id','band_id','event_id'],
     'performance.csv',
-    'Databases-Ntua-Pulse_Music_Festival/sql/load.sql')
+    '../sql/load.sql')
 
 def dump_payment_method(): _dump_from_csv('payment_method',
     ['pm_name'],
     'payment_method.csv',
-    'Databases-Ntua-Pulse_Music_Festival/sql/load.sql')
+    '../sql/load.sql')
 
 def dump_owner(): _dump_from_csv_image('owner',
     ['first_name','last_name','age','phone_number','method_of_purchase','payment_info','total_charge'],
     'owner.csv',
-    'Databases-Ntua-Pulse_Music_Festival/sql/load.sql')
+    '../sql/load.sql')
 
 def dump_ticket_category(): _dump_from_csv('ticket_category',
     ['cat_name'],
     'ticket_category.csv',
-    'Databases-Ntua-Pulse_Music_Festival/sql/load.sql')
+    '../sql/load.sql')
 
 def dump_ticket(): _dump_from_csv('ticket',
     ['ticket_category','purchase_date','cost','method_of_purchase','activated','event_id','owner_id'],
     'ticket.csv',
-    'Databases-Ntua-Pulse_Music_Festival/sql/load.sql')
+    '../sql/load.sql')
 
 def dump_buyer(): _dump_from_csv_image('buyer',
     ['first_name','last_name','age','phone_number','method_of_purchase','payment_info','number_of_desired_tickets'],
     'buyer.csv',
-    'Databases-Ntua-Pulse_Music_Festival/sql/load.sql')
+    '../sql/load.sql')
 
 def dump_seller_queue(): _dump_from_csv('seller_queue',
     ['seller_id','ticket_id'],
     'seller_queue.csv',
-    'Databases-Ntua-Pulse_Music_Festival/sql/load.sql')
+    '../sql/load.sql')
 
 def dump_buyer_queue(): _dump_from_csv('buyer_queue',
     ['buyer_id','interest_datetime','ticket_id','event_id','ticket_category','sold'],
     'buyer_queue.csv',
-    'Databases-Ntua-Pulse_Music_Festival/sql/load.sql')
+    '../sql/load.sql')
 
 def dump_review(): _dump_from_csv('review',
     ['ticket_id','interpretation','sound_and_lighting','stage_presence','organization','overall_impression','review_date','performance_id'],
     'review.csv',
-    'Databases-Ntua-Pulse_Music_Festival/sql/load.sql')
+    '../sql/load.sql')
 
 if __name__ == "__main__":
     fill_location()
@@ -404,6 +404,9 @@ if __name__ == "__main__":
     fill_buyer_queue()
     fill_review()
     print("All tables populated.")
+
+    # Run (uncomment) only when you want to change the DML inserts
+    '''
     dump_location()
     dump_festival()
     dump_stage()
@@ -429,3 +432,4 @@ if __name__ == "__main__":
     dump_buyer_queue()
     dump_review()
     print("All inserts to DML.")
+'''
