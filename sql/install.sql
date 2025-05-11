@@ -206,6 +206,9 @@ CREATE TABLE  IF NOT EXISTS ticket (
     FOREIGN KEY (method_of_purchase) REFERENCES payment_method(pm_name)
     )AUTO_INCREMENT = 1000000000000, ENGINE=InnoDB;
 
+CREATE INDEX tick_id on ticket(ticket_id);
+CREATE INDEX own_id on ticket(owner_id);
+
 CREATE TABLE IF NOT EXISTS buyer (
     buyer_id INT PRIMARY KEY AUTO_INCREMENT,
     first_name VARCHAR(20) NOT NULL,
@@ -1105,8 +1108,9 @@ BEGIN
         JOIN event e1 ON e1.event_id = in_event_id
         WHERE e2.event_date = e1.event_date
       )
+    ORDER BY RAND()
     LIMIT 1;
-
+ 
     IF available_staff_id IS NOT NULL THEN
       INSERT INTO staff_schedule (staff_id, event_id, role_id)
       VALUES (available_staff_id, in_event_id, tech_role_id);
