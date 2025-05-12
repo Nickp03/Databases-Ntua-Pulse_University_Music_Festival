@@ -2,8 +2,8 @@ Q15 Output.
 
 first_name|last_name|artist_name|total_score|
 ----------+---------+-----------+-----------+
-Jamie     |Martinez |Robin502   |         22|
-Jamie     |Davis    |Jordan228  |         22|
-Taylor    |Lee      |Robin580   |         22|
-Morgan    |Lee      |Robin178   |         21|
-Morgan    |Garcia   |Avery893   |         21|
+Taylor    |Lee      |Morgan257  |         23|
+Avery     |Davis    |Dakota424  |         22|
+Dakota    |Miller   |Taylor875  |         22|
+Casey     |Miller   |Taylor942  |         21|
+Casey     |Miller   |Taylor279  |         21|
