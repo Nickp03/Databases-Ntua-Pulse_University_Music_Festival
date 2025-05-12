@@ -163,16 +163,16 @@ def _dump_from_csv_image(table, columns, csv_path, dump_path):
     print(f"Dumped INSERTs for {table} to {dump_path}")
 
 # Fill functions for each table
-def fill_location(): _fill_from_csv_image('location',
-    ['address','latitude','longitude','city','country','continent'],
+def fill_location(): _fill_from_csv('location',
+    ['address','latitude','longitude','city','country','continent','image'],
     'location.csv')
 
-def fill_festival(): _fill_from_csv_image('festival',
-    ['year','start_date','end_date','location_id'],
+def fill_festival(): _fill_from_csv('festival',
+    ['year','start_date','end_date','location_id','image'],
     'festival.csv')
 
-def fill_stage(): _fill_from_csv_image('stage',
-    ['name','description','max_capacity','equipment'],
+def fill_stage(): _fill_from_csv('stage',
+    ['name','description','max_capacity','equipment','image'],
     'stage.csv')
 
 def fill_event(): _fill_from_csv('event',
@@ -187,8 +187,8 @@ def fill_experience_level(): _fill_from_csv('experience_level',
     ['level_name'],
     'experience_level.csv')
 
-def fill_staff(): _fill_from_csv_image('staff',
-    ['name','age','role_id','level_id'],
+def fill_staff(): _fill_from_csv('staff',
+    ['name','age','role_id','level_id','image'],
     'staff.csv')
 
 def fill_staff_schedule(): _fill_from_csv('staff_schedule',
@@ -203,12 +203,12 @@ def fill_subgenre(): _fill_from_csv('subgenre',
     ['subgenre_name','genre_id'],
     'subgenre.csv')
 
-def fill_artist(): _fill_from_csv_image('artist',
-    ['artist_name','artist_lastname','stage_name','DOB','website','instagram'],
+def fill_artist(): _fill_from_csv('artist',
+    ['artist_name','artist_lastname','stage_name','DOB','website','instagram','image'],
     'artist.csv')
 
-def fill_band(): _fill_from_csv_image('band',
-    ['band_name','date_of_creation','website','instagram','genre_id','subgenre_id'],
+def fill_band(): _fill_from_csv('band',
+    ['band_name','date_of_creation','website','instagram','genre_id','subgenre_id','image'],
     'band.csv')
 
 def fill_artist_band(): _fill_from_csv('artist_band',
@@ -239,8 +239,8 @@ def fill_payment_method(): _fill_from_csv('payment_method',
     ['pm_name'],
     'payment_method.csv')
 
-def fill_owner(): _fill_from_csv_image('owner',
-    ['first_name','last_name','age','phone_number','method_of_purchase','payment_info','total_charge'],
+def fill_owner(): _fill_from_csv('owner',
+    ['first_name','last_name','age','phone_number','method_of_purchase','payment_info','total_charge','image'],
     'owner.csv')
 
 def fill_ticket_category(): _fill_from_csv('ticket_category',
@@ -251,8 +251,8 @@ def fill_ticket(): _fill_from_csv('ticket',
     ['ticket_category','purchase_date','cost','method_of_purchase','activated','event_id','owner_id'],
     'ticket.csv')
 
-def fill_buyer(): _fill_from_csv_image('buyer',
-    ['first_name','last_name','age','phone_number','method_of_purchase','payment_info','number_of_desired_tickets'],
+def fill_buyer(): _fill_from_csv('buyer',
+    ['first_name','last_name','age','phone_number','method_of_purchase','payment_info','number_of_desired_tickets','image'],
     'buyer.csv')
 
 def fill_seller_queue(): _fill_from_csv_seller_queue('seller_queue',
@@ -268,18 +268,18 @@ def fill_review(): _fill_from_csv('review',
     'review.csv')
 
 # Dump functions for each table for DML
-def dump_location(): _dump_from_csv_image('location',
-    ['address','latitude','longitude','city','country','continent'],
+def dump_location(): _dump_from_csv('location',
+    ['address','latitude','longitude','city','country','continent','image'],
     'location.csv',
     '../sql/load.sql')
 
-def dump_festival(): _dump_from_csv_image('festival',
-    ['year','start_date','end_date','location_id'],
+def dump_festival(): _dump_from_csv('festival',
+    ['year','start_date','end_date','location_id','image'],
     'festival.csv',
     '../sql/load.sql')
 
-def dump_stage(): _dump_from_csv_image('stage',
-    ['name','description','max_capacity','equipment'],
+def dump_stage(): _dump_from_csv('stage',
+    ['name','description','max_capacity','equipment','image'],
     'stage.csv',
     '../sql/load.sql')
 
@@ -298,8 +298,8 @@ def dump_experience_level(): _dump_from_csv('experience_level',
     'experience_level.csv',
     '../sql/load.sql')
 
-def dump_staff(): _dump_from_csv_image('staff',
-    ['name','age','role_id','level_id'],
+def dump_staff(): _dump_from_csv('staff',
+    ['name','age','role_id','level_id','image'],
     'staff.csv',
     '../sql/load.sql')
 
@@ -318,13 +318,13 @@ def dump_subgenre(): _dump_from_csv('subgenre',
     'subgenre.csv',
     '../sql/load.sql')
 
-def dump_artist(): _dump_from_csv_image('artist',
-    ['artist_name','artist_lastname','stage_name','DOB','website','instagram'],
+def dump_artist(): _dump_from_csv('artist',
+    ['artist_name','artist_lastname','stage_name','DOB','website','instagram','image'],
     'artist.csv',
     '../sql/load.sql')
 
-def dump_band(): _dump_from_csv_image('band',
-    ['band_name','date_of_creation','website','instagram','genre_id','subgenre_id'],
+def dump_band(): _dump_from_csv('band',
+    ['band_name','date_of_creation','website','instagram','genre_id','subgenre_id','image'],
     'band.csv',
     '../sql/load.sql')
 
@@ -363,8 +363,8 @@ def dump_payment_method(): _dump_from_csv('payment_method',
     'payment_method.csv',
     '../sql/load.sql')
 
-def dump_owner(): _dump_from_csv_image('owner',
-    ['first_name','last_name','age','phone_number','method_of_purchase','payment_info','total_charge'],
+def dump_owner(): _dump_from_csv('owner',
+    ['first_name','last_name','age','phone_number','method_of_purchase','payment_info','total_charge','image'],
     'owner.csv',
     '../sql/load.sql')
 
@@ -378,8 +378,8 @@ def dump_ticket(): _dump_from_csv('ticket',
     'ticket.csv',
     '../sql/load.sql')
 
-def dump_buyer(): _dump_from_csv_image('buyer',
-    ['first_name','last_name','age','phone_number','method_of_purchase','payment_info','number_of_desired_tickets'],
+def dump_buyer(): _dump_from_csv('buyer',
+    ['first_name','last_name','age','phone_number','method_of_purchase','payment_info','number_of_desired_tickets','image'],
     'buyer.csv',
     '../sql/load.sql')
 
@@ -428,7 +428,7 @@ if __name__ == "__main__":
     print("All tables populated.")
 
     # Run (uncomment) only when you want to change the DML inserts
-    #'''
+    '''
     dump_location()
     dump_festival()
     dump_stage()
@@ -456,4 +456,4 @@ if __name__ == "__main__":
     dump_buyer_queue()
     dump_review()
     print("All inserts to DML.")
-#'''
+'''
