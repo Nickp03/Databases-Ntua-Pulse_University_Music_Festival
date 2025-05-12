@@ -1,1 +1,6 @@
 Q14 Output.
+
+genre_name|year1|year2|total_appearances|
+----------+-----+-----+-----------------+
+Rock      | 2000| 2001|                5|
+Soul      | 2006| 2007|                3|

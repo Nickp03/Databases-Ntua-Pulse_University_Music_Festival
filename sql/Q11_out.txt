@@ -1,1 +1,28 @@
 Q11 Output.
+
+artist_id|stage_name|appearances|
+---------+----------+-----------+
+        5|Alex858   |          1|
+        8|Jamie595  |          1|
+       15|Charlie151|          1|
+       31|Avery893  |          2|
+       41|Alex445   |          2|
+       58|Taylor942 |          2|
+       60|Charlie546|          2|
+       89|Charlie130|          1|
+      103|Casey934  |          2|
+      142|Casey721  |          2|
+      145|Alex132   |          1|
+      151|Jamie909  |          2|
+      169|Morgan765 |          2|
+      192|Morgan600 |          2|
+      198|Avery219  |          1|
+      218|Taylor279 |          1|
+      220|Morgan709 |          1|
+      221|Robin112  |          2|
+      225|Robin502  |          1|
+      253|Robin580  |          2|
+      257|Charlie135|          2|
+      269|Charlie839|          2|
+      287|Jamie387  |          1|
+      297|Robin178  |          2|
