@@ -4,7 +4,7 @@ backstage,2008-06-15 12:00:00,200.0,bank_account,0,73,1341
 VIP,2002-06-15 12:00:00,150.0,credit,0,21,376
 VIP,2002-06-17 12:00:00,150.0,credit,0,26,914
 backstage,2008-06-15 12:00:00,200.0,credit,0,75,272
-backstage,2000-06-16 12:00:00,200.0,bank_account,0,6,1305
+backstage,2000-06-16 12:00:00,200.0,bank_account,0,6,1305 
 backstage,2019-06-17 12:00:00,200.0,bank_account,0,179,241
 general_entry,2005-06-16 12:00:00,30.0,credit,0,50,26
 general_entry,2005-06-15 12:00:00,30.0,bank_account,0,47,645
@@ -237,6 +237,7 @@ backstage,2012-06-16 12:00:00,200.0,credit,0,114,1406
 general_entry,2015-06-17 12:00:00,60.0,debit,0,142,698
 VIP,2009-06-16 12:00:00,150.0,credit,0,87,1475
 general_entry,2001-06-17 12:00:00,30.0,bank_account,0,16,551
+general_entry,2001-06-17 12:00:00,30.0,bank_account,0,17,551
 general_entry,2017-06-15 12:00:00,30.0,bank_account,0,156,315
 VIP,2014-06-15 12:00:00,150.0,credit,0,128,573
 backstage,2015-06-15 12:00:00,200.0,bank_account,0,136,738
@@ -2103,3 +2104,8 @@ VIP,2026-06-17 12:00:00,150.0,bank_account,0,241,93
 backstage,2026-06-17 12:00:00,200.0,bank_account,0,241,213
 backstage,2026-06-17 12:00:00,200.0,credit,0,241,1032
 general_entry,2026-06-17 12:00:00,100.0,bank_account,0,241,577
+general_entry,1999-06-16 12:00:00,100.0,bank_account,0,2,1370
+general_entry,2025-06-15 12:00:00,60.0,credit,0,227,1453
+general_entry,2025-06-15 12:00:00,60.0,credit,0,228,1453
+VIP,2022-06-15 12:00:00,150.0,bank_account,0,207,127
+VIP,2022-06-15 12:00:00,150.0,bank_account,0,206,127
