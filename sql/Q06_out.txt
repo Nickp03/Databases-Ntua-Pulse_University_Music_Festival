@@ -1,1 +1,54 @@
 Q06 Output.
+
+Παρακάτω φαίνονται τα αποτελέσματα των Queries για δύο τιμές. Για λόγους επιβεβαίωσης φαίνονται κάτω τα αναλυτικά score των owners που επιλέχθηκαν.
+
+SET @searched_for_owner=789;
+select owner_id,review.ticket_id,performance_id,SUM(overall_impression+interpretation+sound_and_lighting+stage_presence+organization)/5 AS Average
+from review
+join ticket
+on ticket.ticket_id=review.ticket_id
+where owner_id=@searched_for_owner
+group by owner_id,performance_id
+order by owner_id,performance_id;
++----------+---------------+----------------+---------+
+| owner_id | ticket_id     | performance_id | Average |
++----------+---------------+----------------+---------+
+|      789 | 1000000000015 |            128 |  3.4000 |
+|      789 | 1000000000111 |            183 |  2.6000 |
++----------+---------------+----------------+---------+
+2 rows in set (0.025 sec)
+
+SET @searched_for_owner=1421;
+select owner_id,review.ticket_id,performance_id,SUM(overall_impression+interpretation+sound_and_lighting+stage_presence+organization)/5 AS Average
+from review
+join ticket
+on ticket.ticket_id=review.ticket_id
+where owner_id=@searched_for_owner
+group by owner_id,performance_id
+order by owner_id,performance_id;
+
++----------+---------------+----------------+---------+
+| owner_id | ticket_id     | performance_id | Average |
++----------+---------------+----------------+---------+
+|     1421 | 1000000000517 |             23 |  2.6000 |
+|     1421 | 1000000000010 |            104 |  3.0000 |
+|     1421 | 1000000000092 |            189 |  2.8000 |
++----------+---------------+----------------+---------+
+3 rows in set (0.001 sec)
+
+Τα αναλυτικά scores:
+
++----------+----------------+----------------+--------------------+----------------+--------------+--------------------+
+| owner_id | performance_id | interpretation | sound_and_lighting | stage_presence | organization | overall_impression |
++----------+----------------+----------------+--------------------+----------------+--------------+--------------------+
+|      789 |            128 |              3 |                  4 |              3 |            4 |                  3 |
+|      789 |            183 |              4 |                  1 |              4 |            2 |                  2 |
++----------+----------------+----------------+--------------------+----------------+--------------+--------------------+
+
++----------+----------------+----------------+--------------------+----------------+--------------+--------------------+
+| owner_id | performance_id | interpretation | sound_and_lighting | stage_presence | organization | overall_impression |
++----------+----------------+----------------+--------------------+----------------+--------------+--------------------+
+|     1421 |             23 |              2 |                  4 |              2 |            1 |                  4 |
+|     1421 |            104 |              4 |                  1 |              2 |            4 |                  4 |
+|     1421 |            189 |              1 |                  2 |              2 |            4 |                  5 |
++----------+----------------+----------------+--------------------+----------------+--------------+--------------------+
