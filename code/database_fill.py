@@ -40,7 +40,8 @@ def _fill_from_csv_image(table, columns, csv_path):
                     clean = [None if cell == '' else cell for cell in row[:-1]]
                     img = row[-1]
                     try:
-                        bin_img = convert_data(img)
+                        raw_img = convert_data(img)
+                        bin_img = pymysql.Binary(raw_img)
                     except Exception as a:
                         bin_img = None
                     data_cols = clean + [bin_img]
@@ -150,7 +151,8 @@ def _dump_from_csv_image(table, columns, csv_path, dump_path):
                 clean = [None if cell == '' else cell for cell in row[:-1]]
                 img = row[-1]
                 try:
-                    bin_img = convert_data(img)
+                    raw_img = convert_data(img)
+                    bin_img = pymysql.Binary(raw_img)
                 except Exception as a:
                     bin_img = None
                 data_cols = clean + [bin_img]
@@ -426,7 +428,7 @@ if __name__ == "__main__":
     print("All tables populated.")
 
     # Run (uncomment) only when you want to change the DML inserts
-    '''
+    #'''
     dump_location()
     dump_festival()
     dump_stage()
@@ -454,4 +456,4 @@ if __name__ == "__main__":
     dump_buyer_queue()
     dump_review()
     print("All inserts to DML.")
-'''
+#'''
