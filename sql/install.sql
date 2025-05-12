@@ -1187,3 +1187,47 @@ BEGIN
 	END IF;
 END //
 DELIMITER ;
+
+DELIMITER $$
+
+CREATE TRIGGER no_double_booking
+BEFORE INSERT ON performance
+FOR EACH ROW
+BEGIN
+    DECLARE existing_count INT;
+
+    IF NEW.artist_id IS NOT NULL THEN
+        SELECT COUNT(*)
+        INTO existing_count
+        FROM performance p
+        JOIN event e ON p.event_id = e.event_id
+        WHERE p.artist_id = NEW.artist_id
+          AND e.event_date = (SELECT event_date FROM event WHERE event_id = NEW.event_id)
+          AND ((NEW.perf_time BETWEEN p.perf_time AND ADDTIME(p.perf_time, SEC_TO_TIME(p.duration * 60)))
+               OR (ADDTIME(NEW.perf_time, SEC_TO_TIME(NEW.duration * 60)) BETWEEN p.perf_time AND ADDTIME(p.perf_time, SEC_TO_TIME(p.duration * 60))))
+          AND p.event_id != NEW.event_id;
+
+        IF existing_count > 0 THEN
+            SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'Artist is already scheduled to perform at the same time.';
+        END IF;
+
+    ELSEIF NEW.band_id IS NOT NULL THEN
+        SELECT COUNT(*)
+        INTO existing_count
+        FROM performance p
+        JOIN event e ON p.event_id = e.event_id
+        WHERE p.band_id = NEW.band_id
+          AND e.event_date = (SELECT event_date FROM event WHERE event_id = NEW.event_id)
+          AND ((NEW.perf_time BETWEEN p.perf_time AND ADDTIME(p.perf_time, SEC_TO_TIME(p.duration * 60)))
+               OR (ADDTIME(NEW.perf_time, SEC_TO_TIME(NEW.duration * 60)) BETWEEN p.perf_time AND ADDTIME(p.perf_time, SEC_TO_TIME(p.duration * 60))))
+          AND p.event_id != NEW.event_id;
+
+        IF existing_count > 0 THEN
+            SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'Band is already scheduled to perform at the same time.';
+        END IF;
+    END IF;
+END$$
+
+DELIMITER ;
