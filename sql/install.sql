@@ -107,13 +107,9 @@ CREATE TABLE IF NOT EXISTS artist(
     artist_lastname VARCHAR(20),
     stage_name VARCHAR(20) NOT NULL UNIQUE,
     DOB DATE,
-    genre_id INT NOT NULL, 
-    subgenre_id INT NOT NULL,
     website VARCHAR(77),
     instagram VARCHAR(30),
-    image BLOB NULL DEFAULT NULL,
-    FOREIGN KEY (genre_id) REFERENCES genre(genre_id),
-    FOREIGN KEY (subgenre_id) REFERENCES subgenre(subgenre_id)
+    image BLOB NULL DEFAULT NULL
 )ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS band (
@@ -122,7 +118,7 @@ CREATE TABLE IF NOT EXISTS band (
     date_of_creation DATE,
     website VARCHAR(255),
     instagram VARCHAR(30),
-    genre_id INT NOT NULL, 
+    genre_id INT NOT NULL,
     subgenre_id INT NOT NULL,
     image BLOB NULL DEFAULT NULL,
     FOREIGN KEY (genre_id) REFERENCES genre(genre_id),
@@ -136,6 +132,23 @@ CREATE TABLE IF NOT EXISTS artist_band(-- many to many relationship=>linking tab
     FOREIGN KEY (artist_id) REFERENCES artist(artist_id),
     FOREIGN KEY (band_id) REFERENCES band(band_id)
 )ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS artist_genre(-- many to many relationship=>linking table
+	artist_id INT,
+    genre_id INT,
+    PRIMARY KEY (artist_id,genre_id),
+    FOREIGN KEY (artist_id) REFERENCES artist(artist_id),
+    FOREIGN KEY (genre_id) REFERENCES genre(genre_id)
+)ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS artist_subgenre(-- many to many relationship=>linking table
+	artist_id INT,
+    subgenre_id INT,
+    PRIMARY KEY (artist_id,subgenre_id),
+    FOREIGN KEY (artist_id) REFERENCES artist(artist_id),
+    FOREIGN KEY (subgenre_id) REFERENCES subgenre(subgenre_id)
+)ENGINE=InnoDB;
+
 
 CREATE TABLE perf_kind (
   kind_id INT AUTO_INCREMENT PRIMARY KEY,
