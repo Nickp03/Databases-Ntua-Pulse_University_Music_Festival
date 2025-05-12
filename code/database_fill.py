@@ -202,7 +202,7 @@ def fill_subgenre(): _fill_from_csv('subgenre',
     'subgenre.csv')
 
 def fill_artist(): _fill_from_csv_image('artist',
-    ['artist_name','artist_lastname','stage_name','DOB','genre_id','subgenre_id','website','instagram'],
+    ['artist_name','artist_lastname','stage_name','DOB','website','instagram'],
     'artist.csv')
 
 def fill_band(): _fill_from_csv_image('band',
@@ -212,6 +212,14 @@ def fill_band(): _fill_from_csv_image('band',
 def fill_artist_band(): _fill_from_csv('artist_band',
     ['band_id','artist_id'],
     'artist_band.csv')
+
+def fill_artist_genre(): _fill_from_csv('artist_genre',
+    ['artist_id','genre_id'],
+    'artist_genre.csv')
+
+def fill_artist_subgenre(): _fill_from_csv('artist_subgenre',
+    ['artist_id','subgenre_id'],
+    'artist_subgenre.csv')
 
 def fill_perf_kind(): _fill_from_csv('perf_kind',
     ['kind_name'],
@@ -309,7 +317,7 @@ def dump_subgenre(): _dump_from_csv('subgenre',
     '../sql/load.sql')
 
 def dump_artist(): _dump_from_csv_image('artist',
-    ['artist_name','artist_lastname','stage_name','DOB','genre_id','subgenre_id','website','instagram'],
+    ['artist_name','artist_lastname','stage_name','DOB','website','instagram'],
     'artist.csv',
     '../sql/load.sql')
 
@@ -321,6 +329,16 @@ def dump_band(): _dump_from_csv_image('band',
 def dump_artist_band(): _dump_from_csv('artist_band',
     ['band_id','artist_id'],
     'artist_band.csv',
+    '../sql/load.sql')
+
+def dump_artist_genre(): _dump_from_csv('artist_genre',
+    ['artist_id','genre_id'],
+    'artist_genre.csv',
+    '../sql/load.sql')
+
+def dump_artist_subgenre(): _dump_from_csv('artist_subgenre',
+    ['artist_id','subgenre_id'],
+    'artist_subgenre.csv',
     '../sql/load.sql')
 
 def dump_perf_kind(): _dump_from_csv('perf_kind',
@@ -392,6 +410,8 @@ if __name__ == "__main__":
     fill_artist()
     fill_band()
     fill_artist_band()
+    fill_artist_genre()
+    fill_artist_subgenre()
     fill_perf_kind()
     fill_perf_type()
     fill_performance()
@@ -399,10 +419,10 @@ if __name__ == "__main__":
     fill_owner()
     fill_ticket_category()
     fill_ticket()
-    fill_buyer()
-    fill_seller_queue()
-    fill_buyer_queue()
-    fill_review()
+   # fill_buyer()
+   # fill_seller_queue()
+   # fill_buyer_queue()
+   # fill_review()
     print("All tables populated.")
 
     # Run (uncomment) only when you want to change the DML inserts
@@ -420,6 +440,8 @@ if __name__ == "__main__":
     dump_artist()
     dump_band()
     dump_artist_band()
+    dump_artist_genre()
+    dump_artist_subgenre()
     dump_perf_kind()
     dump_perf_type()
     dump_performance()
