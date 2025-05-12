@@ -1231,3 +1231,48 @@ BEGIN
 END$$
 
 DELIMITER ;
+
+DELIMITER $$
+
+CREATE TRIGGER no_more_than_3_years
+BEFORE INSERT ON performance
+FOR EACH ROW
+BEGIN
+  DECLARE perf_year INT;
+  DECLARE count_streak INT;
+
+  SELECT f.year
+  INTO perf_year
+  FROM event e
+  JOIN festival f ON e.festival_id = f.festival_id
+  WHERE e.event_id = NEW.event_id;
+
+  IF NEW.artist_id IS NOT NULL THEN
+    SELECT COUNT(DISTINCT f.year) INTO count_streak
+    FROM performance p
+    JOIN event e ON p.event_id = e.event_id
+    JOIN festival f ON e.festival_id = f.festival_id
+    WHERE p.artist_id = NEW.artist_id
+      AND f.year IN (perf_year - 1, perf_year - 2, perf_year - 3);
+
+    IF count_streak = 3 THEN
+      SIGNAL SQLSTATE '45000'
+      SET MESSAGE_TEXT = 'Artist cannot participate in more than 3 consecutive festival years.';
+    END IF;
+
+  ELSEIF NEW.band_id IS NOT NULL THEN
+    SELECT COUNT(DISTINCT f.year) INTO count_streak
+    FROM performance p
+    JOIN event e ON p.event_id = e.event_id
+    JOIN festival f ON e.festival_id = f.festival_id
+    WHERE p.band_id = NEW.band_id
+      AND f.year IN (perf_year - 1, perf_year - 2, perf_year - 3);
+
+    IF count_streak = 3 THEN
+      SIGNAL SQLSTATE '45000'
+      SET MESSAGE_TEXT = 'Band cannot participate in more than 3 consecutive festival years.';
+    END IF;
+  END IF;
+END$$
+
+DELIMITER ;
