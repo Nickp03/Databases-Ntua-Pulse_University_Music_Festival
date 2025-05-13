@@ -83,10 +83,8 @@ CREATE TABLE staff_schedule (
     schedule_id INT AUTO_INCREMENT PRIMARY KEY,
     staff_id INT NOT NULL,
     event_id INT NOT NULL,
-    role_id INT NOT NULL,
     FOREIGN KEY (staff_id) REFERENCES staff(staff_id),
-    FOREIGN KEY (event_id) REFERENCES event(event_id) ON DELETE CASCADE,
-    FOREIGN KEY (role_id) REFERENCES staff_role(role_id)
+    FOREIGN KEY (event_id) REFERENCES event(event_id) ON DELETE CASCADE
 )ENGINE=InnoDB;
 
 CREATE TABLE genre (
@@ -1025,8 +1023,8 @@ BEGIN
 
     IF available_staff_id IS NOT NULL THEN
 
-      INSERT INTO staff_schedule (staff_id, event_id, role_id)
-      VALUES (available_staff_id, in_event_id, security_role_id);
+      INSERT INTO staff_schedule (staff_id, event_id)
+      VALUES (available_staff_id, in_event_id);
 
       SET missing_security = missing_security - 1;
     ELSE
@@ -1081,8 +1079,8 @@ BEGIN
     LIMIT 1;
 
     IF available_staff_id IS NOT NULL THEN
-      INSERT INTO staff_schedule (staff_id, event_id, role_id)
-      VALUES (available_staff_id, in_event_id, support_role_id);
+      INSERT INTO staff_schedule (staff_id, event_id)
+      VALUES (available_staff_id, in_event_id);
 
       SET missing_support = missing_support - 1;
     ELSE
@@ -1125,8 +1123,8 @@ BEGIN
     LIMIT 1;
  
     IF available_staff_id IS NOT NULL THEN
-      INSERT INTO staff_schedule (staff_id, event_id, role_id)
-      VALUES (available_staff_id, in_event_id, tech_role_id);
+      INSERT INTO staff_schedule (staff_id, event_id)
+      VALUES (available_staff_id, in_event_id);
     END IF;
   END IF;
 END$$
