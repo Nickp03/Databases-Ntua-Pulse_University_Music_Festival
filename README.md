@@ -1,5 +1,3 @@
-README file.
-
 # Databases-NTUA
 
 This repository contains the Semester Project for the **Databases** course of **ECE NTUA**.
