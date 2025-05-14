@@ -862,7 +862,6 @@ DELIMITER ;
 -- AUTOSELL
 -- INSERT BUYER
 DELIMITER $$
--- DROP TRIGGER IF EXISTS search_for_item;-- FIND MATCH 
 CREATE TRIGGER search_for_item_once_its_desired
 BEFORE INSERT ON buyer_queue
 FOR EACH ROW
@@ -977,7 +976,6 @@ DELIMITER ;
 
 -- INSERT SELLER
 DELIMITER $$
--- DROP TRIGGER IF EXISTS search_for_item_once_its_supplied;-- FIND MATCH 
 CREATE TRIGGER search_for_item_once_its_supplied
 BEFORE INSERT ON seller_queue
 FOR EACH ROW
@@ -1190,7 +1188,24 @@ BEGIN
     DELETE FROM seller_queue WHERE sold=1;
 END |
 
-delimiter ;c
+delimiter ;
+
+delimiter |
+
+CREATE EVENT clear_old_resell
+ON SCHEDULE EVERY 1 YEAR 
+STARTS '2000-07-01 00:00:00'
+COMMENT 'Clear sold and desired entries from the old festivals resell queue'
+DO
+BEGIN
+-- the event is executed every july so NOW() is always larger than interest_datetime
+-- this is used to bypass safe update on sql
+    DELETE FROM buyer_queue WHERE interest_datetime<NOW(); 
+    DELETE FROM seller_queue WHERE interest_datetime<NOW();
+END |
+
+delimiter ;
+
 
 -- Trigger to ensure that an owner/ticket can only review a performance once
 
