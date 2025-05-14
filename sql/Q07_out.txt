@@ -1,17 +1,23 @@
 Q07 Output.
 
+This is the output of the query
 +-------------+--------------------------+
 | festival_id | Average_experience_level |
 +-------------+--------------------------+
-|          18 |                   1.4444 |
+|          24 |                   1.1111 |
 +-------------+--------------------------+
+
+This is the output of the modified query where instead of LIMIT 1 LIMIT 5 is used.
+    It is included to help illustrate the correct calculation and ordering of the
+    Average_experience_level field.
 
 +-------------+--------------------------+
 | festival_id | Average_experience_level |
 +-------------+--------------------------+
-|          18 |                   1.4444 |
-|           3 |                   1.6667 |
-|          21 |                   1.6667 |
-|          13 |                   1.6667 |
-|          11 |                   1.6667 |
+|          24 |                   1.1111 |
+|          11 |                   1.4444 |
+|           4 |                   1.5556 |
+|          25 |                   1.6667 |
+|          28 |                   1.6667 |
 +-------------+--------------------------+
+
