@@ -302,87 +302,199 @@ CREATE INDEX review_ticket ON review(ticket_id);
 CREATE INDEX review_perf_date ON review(performance_id, review_date);
 CREATE INDEX perf_time ON performance(perf_time);
 
--- Trigger to ensure that an owner/ticket can only review a performance once
-
 DELIMITER $$
-CREATE TRIGGER review_no_dup
-BEFORE INSERT ON review
+
+CREATE TRIGGER check_stage_event_conflict
+BEFORE INSERT ON event
 FOR EACH ROW
 BEGIN
-  IF EXISTS (
-    SELECT 1
-	  FROM review
-	  WHERE performance_id=NEW.performance_id AND ticket_id=NEW.ticket_id
-  )
-  THEN
-	  SIGNAL SQLSTATE '45000'
-	  SET MESSAGE_TEXT = 'Duplicate review: an owner may only review each performance once';
-  END IF;
-END$$
+    DECLARE conflict_count INT;
+
+    SELECT COUNT(*)
+    INTO conflict_count
+    FROM event
+    WHERE stage_id = NEW.stage_id
+      AND event_date = NEW.event_date
+      AND (
+            (NEW.start_time BETWEEN start_time AND end_time) OR
+            (NEW.end_time BETWEEN start_time AND end_time) OR
+            (start_time BETWEEN NEW.start_time AND NEW.end_time)
+          );
+
+    IF conflict_count > 0 THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Η σκηνή είναι ήδη δεσμευμένη για άλλη παράσταση εκείνη την ώρα.';
+    END IF;
+END $$
+
 DELIMITER ;
 
 DELIMITER $$
-CREATE TRIGGER review_sum_before_insert
-BEFORE INSERT ON review
-FOR EACH ROW
-BEGIN -- If no summary row exists yet for this performance, create it
-  IF NOT EXISTS (
-    SELECT 1
-    FROM review_summary
-    WHERE performance_id = NEW.performance_id
-  ) 
-  THEN
-    INSERT INTO review_summary(performance_id) VALUES (NEW.performance_id);
+
+CREATE PROCEDURE assign_security_to_event(IN in_event_id INT)
+BEGIN
+  DECLARE security_role_id INT;
+  DECLARE required_security INT DEFAULT 0;
+  DECLARE current_security INT DEFAULT 0;
+  DECLARE missing_security INT DEFAULT 0;
+  DECLARE available_staff_id INT;
+  DECLARE stage_id_val INT;
+
+  SELECT role_id INTO security_role_id
+  FROM staff_role
+  WHERE role_name = 'security';
+
+  SELECT stage_id INTO stage_id_val
+  FROM event
+  WHERE event_id = in_event_id;
+
+  SELECT CEIL(s.max_capacity * 0.05) INTO required_security
+  FROM stage s
+  WHERE s.stage_id = stage_id_val;
+
+  SELECT COUNT(*) INTO current_security
+  FROM staff_schedule ss
+  JOIN staff s ON ss.staff_id = s.staff_id
+  WHERE ss.event_id = in_event_id AND s.role_id = security_role_id;
+
+  SET missing_security = required_security - current_security;
+
+  WHILE missing_security > 0 DO
+    SELECT s.staff_id INTO available_staff_id
+    FROM staff s
+    WHERE s.role_id = security_role_id
+      AND s.staff_id NOT IN (
+        SELECT ss.staff_id
+        FROM staff_schedule ss
+        JOIN event e2 ON ss.event_id = e2.event_id
+        JOIN event e1 ON e1.event_id = in_event_id
+        WHERE e2.event_date = e1.event_date
+      )
+    LIMIT 1;
+
+    IF available_staff_id IS NOT NULL THEN
+
+      INSERT INTO staff_schedule (staff_id, event_id)
+      VALUES (available_staff_id, in_event_id);
+
+      SET missing_security = missing_security - 1;
+    ELSE
+      SET missing_security = 0;
+    END IF;
+  END WHILE;
+END$$
+
+DELIMITER ;
+
+DELIMITER $$
+
+CREATE PROCEDURE assign_support_to_event(IN in_event_id INT)
+BEGIN
+  DECLARE support_role_id INT;
+  DECLARE required_support INT DEFAULT 0;
+  DECLARE current_support INT DEFAULT 0;
+  DECLARE missing_support INT DEFAULT 0;
+  DECLARE available_staff_id INT;
+  DECLARE stage_id_val INT;
+
+  SELECT role_id INTO support_role_id
+  FROM staff_role
+  WHERE role_name = 'support';
+
+  SELECT stage_id INTO stage_id_val
+  FROM event
+  WHERE event_id = in_event_id;
+
+  SELECT CEIL(s.max_capacity * 0.02) INTO required_support
+  FROM stage s
+  WHERE s.stage_id = stage_id_val;
+
+  SELECT COUNT(*) INTO current_support
+  FROM staff_schedule ss
+  JOIN staff s ON ss.staff_id = s.staff_id
+  WHERE ss.event_id = in_event_id AND s.role_id = support_role_id;
+
+  SET missing_support = required_support - current_support;
+
+  WHILE missing_support > 0 DO
+    SELECT s.staff_id INTO available_staff_id
+    FROM staff s
+    WHERE s.role_id = support_role_id
+      AND s.staff_id NOT IN (
+        SELECT ss.staff_id
+        FROM staff_schedule ss
+        JOIN event e2 ON ss.event_id = e2.event_id
+        JOIN event e1 ON e1.event_id = in_event_id
+        WHERE e2.event_date = e1.event_date
+      )
+    LIMIT 1;
+
+    IF available_staff_id IS NOT NULL THEN
+      INSERT INTO staff_schedule (staff_id, event_id)
+      VALUES (available_staff_id, in_event_id);
+
+      SET missing_support = missing_support - 1;
+    ELSE
+      SET missing_support = 0;
+    END IF;
+  END WHILE;
+END$$
+
+DELIMITER ;
+DELIMITER $$
+
+CREATE PROCEDURE assign_tech_to_event(IN in_event_id INT)
+BEGIN
+  DECLARE tech_role_id INT;
+  DECLARE current_tech INT DEFAULT 0;
+  DECLARE available_staff_id INT;
+
+  
+  SELECT role_id INTO tech_role_id
+  FROM staff_role
+  WHERE role_name = 'technician';
+
+  SELECT COUNT(*) INTO current_tech
+  FROM staff_schedule ss
+  JOIN staff s ON ss.staff_id = s.staff_id
+  WHERE ss.event_id = in_event_id AND s.role_id = tech_role_id;
+
+  IF current_tech = 0 THEN
+    SELECT s.staff_id INTO available_staff_id
+    FROM staff s
+    WHERE s.role_id = tech_role_id
+      AND s.staff_id NOT IN (
+        SELECT ss.staff_id
+        FROM staff_schedule ss
+        JOIN event e2 ON ss.event_id = e2.event_id
+        JOIN event e1 ON e1.event_id = in_event_id
+        WHERE e2.event_date = e1.event_date
+      )
+    ORDER BY RAND()
+    LIMIT 1;
+ 
+    IF available_staff_id IS NOT NULL THEN
+      INSERT INTO staff_schedule (staff_id, event_id)
+      VALUES (available_staff_id, in_event_id);
+    END IF;
   END IF;
 END$$
 
-CREATE TRIGGER review_sum_after_insert
-AFTER INSERT ON review
-FOR EACH ROW
-BEGIN
-  UPDATE review_summary
-  SET
-      avg_interpretation = (avg_interpretation*total_reviews + NEW.interpretation)/(total_reviews+1),
-      avg_sound_and_lighting = (avg_sound_and_lighting*total_reviews + NEW.sound_and_lighting)/(total_reviews+1),
-      avg_stage_presence = (avg_stage_presence*total_reviews + NEW.stage_presence)/(total_reviews+1),
-      avg_organization = (avg_organization*total_reviews + NEW.organization)/(total_reviews+1),
-      avg_overall_impression = (avg_overall_impression*total_reviews + NEW.overall_impression)/(total_reviews+1),
-      total_reviews = total_reviews + 1
-  WHERE performance_id = NEW.performance_id;
-END$$
+DELIMITER ;
 
-CREATE TRIGGER review_sum_after_update
-AFTER UPDATE ON review
-FOR EACH ROW
-BEGIN
-  UPDATE review_summary
-  SET
-      avg_interpretation = (avg_interpretation*total_reviews - OLD.interpretation + NEW.interpretation)/total_reviews,
-      avg_sound_and_lighting = (avg_sound_and_lighting*total_reviews - OLD.sound_and_lighting + NEW.sound_and_lighting)/total_reviews,
-      avg_stage_presence = (avg_stage_presence*total_reviews - OLD.stage_presence + NEW.stage_presence)/total_reviews,
-      avg_organization = (avg_organization*total_reviews - OLD.organization + NEW.organization)/total_reviews,
-      avg_overall_impression = (avg_overall_impression*total_reviews - OLD.overall_impression + NEW.overall_impression)/total_reviews
-  WHERE performance_id = OLD.performance_id;
-END$$
 
-CREATE TRIGGER review_sum_after_delete
-AFTER DELETE ON review
+DELIMITER //
+
+CREATE TRIGGER trigger_check_staff_on_event
+AFTER INSERT ON event
 FOR EACH ROW
 BEGIN
-  IF (SELECT total_reviews FROM review_summary WHERE performance_id = OLD.performance_id) <= 1 THEN
-      DELETE FROM review_summary WHERE performance_id = OLD.performance_id;
-  ELSE
-    UPDATE review_summary
-	  SET
-        avg_interpretation = (avg_interpretation*total_reviews - OLD.interpretation)/(total_reviews-1),
-        avg_sound_and_lighting = (avg_sound_and_lighting*total_reviews - OLD.sound_and_lighting)/(total_reviews-1),
-        avg_stage_presence = (avg_stage_presence*total_reviews - OLD.stage_presence)/(total_reviews-1),
-        avg_organization = (avg_organization*total_reviews - OLD.organization)/(total_reviews-1),
-        avg_overall_impression = (avg_overall_impression*total_reviews - OLD.overall_impression)/(total_reviews-1),
-        total_reviews = total_reviews - 1
-	  WHERE performance_id = OLD.performance_id;
-  END IF;
-END$$
+  CALL assign_security_to_event(NEW.event_id);
+  CALL assign_support_to_event(NEW.event_id);
+  CALL assign_tech_to_event(NEW.event_id);
+END;
+//
+
 DELIMITER ;
 
 DELIMITER $$
@@ -435,6 +547,202 @@ BEGIN
 END$$
 DELIMITER ;
 
+DELIMITER //
+CREATE TRIGGER correct_event_date
+BEFORE INSERT ON event
+FOR EACH ROW
+BEGIN
+	DECLARE festival_start_date DATE;
+    DECLARE festival_end_date DATE;
+    
+    SELECT start_date,end_date
+    INTO festival_start_date,festival_end_date
+    FROM festival
+    WHERE (festival_id=new.festival_id);
+    
+    IF(festival_start_date>new.event_date or festival_end_date<new.event_date) THEN 
+		SET @msg = 'Invalid event date';
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = @msg;
+	END IF;
+END //
+DELIMITER ;
+
+DELIMITER //
+CREATE TRIGGER correct_performance_time
+BEFORE INSERT ON performance
+FOR EACH ROW
+BEGIN
+	DECLARE event_start_time TIME;
+    DECLARE event_end_time TIME;
+    
+    SELECT start_time,end_time
+    INTO event_start_time,event_end_time
+    FROM event
+    WHERE (event_id=new.event_id);
+    
+    IF(event_start_time>new.perf_time or event_end_time<DATE_ADD(new.perf_time, INTERVAL new.duration MINUTE) or event_end_time<=new.perf_time) THEN 
+		SET @msg = 'Invalid performance time or performance duration';
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = @msg;
+	END IF;
+END //
+DELIMITER ;
+
+DELIMITER $$
+
+CREATE TRIGGER no_double_booking
+BEFORE INSERT ON performance
+FOR EACH ROW
+BEGIN
+    DECLARE existing_count INT;
+
+    IF NEW.artist_id IS NOT NULL THEN
+        SELECT COUNT(*)
+        INTO existing_count
+        FROM performance p
+        JOIN event e ON p.event_id = e.event_id
+        WHERE p.artist_id = NEW.artist_id
+          AND e.event_date = (SELECT event_date FROM event WHERE event_id = NEW.event_id)
+          AND ((NEW.perf_time BETWEEN p.perf_time AND ADDTIME(p.perf_time, SEC_TO_TIME(p.duration * 60)))
+               OR (ADDTIME(NEW.perf_time, SEC_TO_TIME(NEW.duration * 60)) BETWEEN p.perf_time AND ADDTIME(p.perf_time, SEC_TO_TIME(p.duration * 60))))
+          AND p.event_id != NEW.event_id;
+
+        IF existing_count > 0 THEN
+            SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'Artist is already scheduled to perform at the same time.';
+        END IF;
+
+    ELSEIF NEW.band_id IS NOT NULL THEN
+        SELECT COUNT(*)
+        INTO existing_count
+        FROM performance p
+        JOIN event e ON p.event_id = e.event_id
+        WHERE p.band_id = NEW.band_id
+          AND e.event_date = (SELECT event_date FROM event WHERE event_id = NEW.event_id)
+          AND ((NEW.perf_time BETWEEN p.perf_time AND ADDTIME(p.perf_time, SEC_TO_TIME(p.duration * 60)))
+               OR (ADDTIME(NEW.perf_time, SEC_TO_TIME(NEW.duration * 60)) BETWEEN p.perf_time AND ADDTIME(p.perf_time, SEC_TO_TIME(p.duration * 60))))
+          AND p.event_id != NEW.event_id;
+
+        IF existing_count > 0 THEN
+            SIGNAL SQLSTATE '45000'
+            SET MESSAGE_TEXT = 'Band is already scheduled to perform at the same time.';
+        END IF;
+    END IF;
+END$$
+
+DELIMITER ;
+
+DELIMITER $$
+
+CREATE TRIGGER no_more_than_3_years
+BEFORE INSERT ON performance
+FOR EACH ROW
+BEGIN
+  DECLARE perf_year INT;
+  DECLARE count_streak INT;
+
+  SELECT f.year
+  INTO perf_year
+  FROM event e
+  JOIN festival f ON e.festival_id = f.festival_id
+  WHERE e.event_id = NEW.event_id;
+
+  IF NEW.artist_id IS NOT NULL THEN
+    SELECT COUNT(DISTINCT f.year) INTO count_streak
+    FROM performance p
+    JOIN event e ON p.event_id = e.event_id
+    JOIN festival f ON e.festival_id = f.festival_id
+    WHERE p.artist_id = NEW.artist_id
+      AND f.year IN (perf_year - 1, perf_year - 2, perf_year - 3);
+
+    IF count_streak = 3 THEN
+      SIGNAL SQLSTATE '45000'
+      SET MESSAGE_TEXT = 'Artist cannot participate in more than 3 consecutive festival years.';
+    END IF;
+
+  ELSEIF NEW.band_id IS NOT NULL THEN
+    SELECT COUNT(DISTINCT f.year) INTO count_streak
+    FROM performance p
+    JOIN event e ON p.event_id = e.event_id
+    JOIN festival f ON e.festival_id = f.festival_id
+    WHERE p.band_id = NEW.band_id
+      AND f.year IN (perf_year - 1, perf_year - 2, perf_year - 3);
+
+    IF count_streak = 3 THEN
+      SIGNAL SQLSTATE '45000'
+      SET MESSAGE_TEXT = 'Band cannot participate in more than 3 consecutive festival years.';
+    END IF;
+  END IF;
+END$$
+
+DELIMITER ;
+
+-- check if event is old 
+delimiter //
+CREATE TRIGGER time_of_event
+BEFORE INSERT ON ticket
+FOR EACH ROW
+BEGIN
+
+	DECLARE events_date DATE;
+    DECLARE today DATE;
+    
+    SET today=NEW.purchase_date;
+	
+	SELECT event_date
+	INTO events_date
+	FROM event
+	WHERE event_id=NEW.event_id;
+    
+    IF (today>events_date) THEN
+		SET @msg = 'This event has passed';
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = @msg;
+        
+	END IF;
+END//
+delimiter ;
+
+-- check if the event is sold out or if the requested event has passed
+delimiter //
+CREATE TRIGGER are_tickets_available
+BEFORE INSERT ON ticket
+FOR EACH ROW
+BEGIN
+
+	DECLARE events_capacity INT;
+    DECLARE max_capacity_now INT;
+
+	SELECT COUNT(*) INTO events_capacity FROM ticket
+		WHERE event_id=NEW.event_id;
+			
+	SELECT max_capacity
+	INTO max_capacity_now 
+	FROM stage
+	WHERE stage_id=(
+		SELECT stage_id 
+		FROM event 
+		WHERE event_id=NEW.event_id);
+    
+    IF (events_capacity=max_capacity_now) THEN
+		SET @msg = 'There are not any tickets available';
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = @msg;
+        
+	END IF;
+END//
+
+delimiter ;a
+
+-- this trigger charges the owner the first time a ticket is bought
+DELIMITER //
+CREATE TRIGGER bill_owner_once_ticket_is_bought
+AFTER INSERT ON ticket
+FOR EACH ROW
+BEGIN
+   UPDATE owner
+   SET total_charge=total_charge+NEW.cost
+   WHERE owner_id=NEW.owner_id;
+END//
+DELIMITER ;
+
 DELIMITER $$
 CREATE TRIGGER check_vip_ticket_limit
 BEFORE INSERT ON ticket
@@ -473,45 +781,6 @@ BEGIN
 	END IF;
 END $$
 
-DELIMITER ;
-
-DELIMITER $$
-
-CREATE TRIGGER check_stage_event_conflict
-BEFORE INSERT ON event
-FOR EACH ROW
-BEGIN
-    DECLARE conflict_count INT;
-
-    SELECT COUNT(*)
-    INTO conflict_count
-    FROM event
-    WHERE stage_id = NEW.stage_id
-      AND event_date = NEW.event_date
-      AND (
-            (NEW.start_time BETWEEN start_time AND end_time) OR
-            (NEW.end_time BETWEEN start_time AND end_time) OR
-            (start_time BETWEEN NEW.start_time AND NEW.end_time)
-          );
-
-    IF conflict_count > 0 THEN
-        SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'Η σκηνή είναι ήδη δεσμευμένη για άλλη παράσταση εκείνη την ώρα.';
-    END IF;
-END $$
-
-DELIMITER ;
-
--- this trigger charges the owner the first time a ticket is bought
-DELIMITER //
-CREATE TRIGGER bill_owner_once_ticket_is_bought
-AFTER INSERT ON ticket
-FOR EACH ROW
-BEGIN
-   UPDATE owner
-   SET total_charge=total_charge+NEW.cost
-   WHERE owner_id=NEW.owner_id;
-END//
 DELIMITER ;
 
 -- this trigger checks the following:
@@ -589,61 +858,6 @@ BEGIN
 END//
 
 DELIMITER ;
-
--- check if the event is sold out or if the requested event has passed
-delimiter //
-CREATE TRIGGER are_tickets_available
-BEFORE INSERT ON ticket
-FOR EACH ROW
-BEGIN
-
-	DECLARE events_capacity INT;
-    DECLARE max_capacity_now INT;
-
-	SELECT COUNT(*) INTO events_capacity FROM ticket
-		WHERE event_id=NEW.event_id;
-			
-	SELECT max_capacity
-	INTO max_capacity_now 
-	FROM stage
-	WHERE stage_id=(
-		SELECT stage_id 
-		FROM event 
-		WHERE event_id=NEW.event_id);
-    
-    IF (events_capacity=max_capacity_now) THEN
-		SET @msg = 'There are not any tickets available';
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = @msg;
-        
-	END IF;
-END//
-
-delimiter ;
-
--- check if event is old 
-delimiter //
-CREATE TRIGGER time_of_event
-BEFORE INSERT ON ticket
-FOR EACH ROW
-BEGIN
-
-	DECLARE events_date DATE;
-    DECLARE today DATE;
-    
-    SET today=NEW.purchase_date;
-	
-	SELECT event_date
-	INTO events_date
-	FROM event
-	WHERE event_id=NEW.event_id;
-    
-    IF (today>events_date) THEN
-		SET @msg = 'This event has passed';
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = @msg;
-        
-	END IF;
-END//
-delimiter ;
 
 -- AUTOSELL
 -- INSERT BUYER
@@ -976,301 +1190,87 @@ BEGIN
     DELETE FROM seller_queue WHERE sold=1;
 END |
 
-delimiter ;
+delimiter ;c
+
+-- Trigger to ensure that an owner/ticket can only review a performance once
 
 DELIMITER $$
-
-CREATE PROCEDURE assign_security_to_event(IN in_event_id INT)
+CREATE TRIGGER review_no_dup
+BEFORE INSERT ON review
+FOR EACH ROW
 BEGIN
-  DECLARE security_role_id INT;
-  DECLARE required_security INT DEFAULT 0;
-  DECLARE current_security INT DEFAULT 0;
-  DECLARE missing_security INT DEFAULT 0;
-  DECLARE available_staff_id INT;
-  DECLARE stage_id_val INT;
-
-  SELECT role_id INTO security_role_id
-  FROM staff_role
-  WHERE role_name = 'security';
-
-  SELECT stage_id INTO stage_id_val
-  FROM event
-  WHERE event_id = in_event_id;
-
-  SELECT CEIL(s.max_capacity * 0.05) INTO required_security
-  FROM stage s
-  WHERE s.stage_id = stage_id_val;
-
-  SELECT COUNT(*) INTO current_security
-  FROM staff_schedule ss
-  JOIN staff s ON ss.staff_id = s.staff_id
-  WHERE ss.event_id = in_event_id AND s.role_id = security_role_id;
-
-  SET missing_security = required_security - current_security;
-
-  WHILE missing_security > 0 DO
-    SELECT s.staff_id INTO available_staff_id
-    FROM staff s
-    WHERE s.role_id = security_role_id
-      AND s.staff_id NOT IN (
-        SELECT ss.staff_id
-        FROM staff_schedule ss
-        JOIN event e2 ON ss.event_id = e2.event_id
-        JOIN event e1 ON e1.event_id = in_event_id
-        WHERE e2.event_date = e1.event_date
-      )
-    LIMIT 1;
-
-    IF available_staff_id IS NOT NULL THEN
-
-      INSERT INTO staff_schedule (staff_id, event_id)
-      VALUES (available_staff_id, in_event_id);
-
-      SET missing_security = missing_security - 1;
-    ELSE
-      SET missing_security = 0;
-    END IF;
-  END WHILE;
+  IF EXISTS (
+    SELECT 1
+	  FROM review
+	  WHERE performance_id=NEW.performance_id AND ticket_id=NEW.ticket_id
+  )
+  THEN
+	  SIGNAL SQLSTATE '45000'
+	  SET MESSAGE_TEXT = 'Duplicate review: an owner may only review each performance once';
+  END IF;
 END$$
-
 DELIMITER ;
 
 DELIMITER $$
-
-CREATE PROCEDURE assign_support_to_event(IN in_event_id INT)
-BEGIN
-  DECLARE support_role_id INT;
-  DECLARE required_support INT DEFAULT 0;
-  DECLARE current_support INT DEFAULT 0;
-  DECLARE missing_support INT DEFAULT 0;
-  DECLARE available_staff_id INT;
-  DECLARE stage_id_val INT;
-
-  SELECT role_id INTO support_role_id
-  FROM staff_role
-  WHERE role_name = 'support';
-
-  SELECT stage_id INTO stage_id_val
-  FROM event
-  WHERE event_id = in_event_id;
-
-  SELECT CEIL(s.max_capacity * 0.02) INTO required_support
-  FROM stage s
-  WHERE s.stage_id = stage_id_val;
-
-  SELECT COUNT(*) INTO current_support
-  FROM staff_schedule ss
-  JOIN staff s ON ss.staff_id = s.staff_id
-  WHERE ss.event_id = in_event_id AND s.role_id = support_role_id;
-
-  SET missing_support = required_support - current_support;
-
-  WHILE missing_support > 0 DO
-    SELECT s.staff_id INTO available_staff_id
-    FROM staff s
-    WHERE s.role_id = support_role_id
-      AND s.staff_id NOT IN (
-        SELECT ss.staff_id
-        FROM staff_schedule ss
-        JOIN event e2 ON ss.event_id = e2.event_id
-        JOIN event e1 ON e1.event_id = in_event_id
-        WHERE e2.event_date = e1.event_date
-      )
-    LIMIT 1;
-
-    IF available_staff_id IS NOT NULL THEN
-      INSERT INTO staff_schedule (staff_id, event_id)
-      VALUES (available_staff_id, in_event_id);
-
-      SET missing_support = missing_support - 1;
-    ELSE
-      SET missing_support = 0;
-    END IF;
-  END WHILE;
-END$$
-
-DELIMITER ;
-DELIMITER $$
-
-CREATE PROCEDURE assign_tech_to_event(IN in_event_id INT)
-BEGIN
-  DECLARE tech_role_id INT;
-  DECLARE current_tech INT DEFAULT 0;
-  DECLARE available_staff_id INT;
-
-  
-  SELECT role_id INTO tech_role_id
-  FROM staff_role
-  WHERE role_name = 'technician';
-
-  SELECT COUNT(*) INTO current_tech
-  FROM staff_schedule ss
-  JOIN staff s ON ss.staff_id = s.staff_id
-  WHERE ss.event_id = in_event_id AND s.role_id = tech_role_id;
-
-  IF current_tech = 0 THEN
-    SELECT s.staff_id INTO available_staff_id
-    FROM staff s
-    WHERE s.role_id = tech_role_id
-      AND s.staff_id NOT IN (
-        SELECT ss.staff_id
-        FROM staff_schedule ss
-        JOIN event e2 ON ss.event_id = e2.event_id
-        JOIN event e1 ON e1.event_id = in_event_id
-        WHERE e2.event_date = e1.event_date
-      )
-    ORDER BY RAND()
-    LIMIT 1;
- 
-    IF available_staff_id IS NOT NULL THEN
-      INSERT INTO staff_schedule (staff_id, event_id)
-      VALUES (available_staff_id, in_event_id);
-    END IF;
+CREATE TRIGGER review_sum_before_insert
+BEFORE INSERT ON review
+FOR EACH ROW
+BEGIN -- If no summary row exists yet for this performance, create it
+  IF NOT EXISTS (
+    SELECT 1
+    FROM review_summary
+    WHERE performance_id = NEW.performance_id
+  ) 
+  THEN
+    INSERT INTO review_summary(performance_id) VALUES (NEW.performance_id);
   END IF;
 END$$
 
-DELIMITER ;
-
-
-DELIMITER //
-
-CREATE TRIGGER trigger_check_staff_on_event
-AFTER INSERT ON event
+CREATE TRIGGER review_sum_after_insert
+AFTER INSERT ON review
 FOR EACH ROW
 BEGIN
-  CALL assign_security_to_event(NEW.event_id);
-  CALL assign_support_to_event(NEW.event_id);
-  CALL assign_tech_to_event(NEW.event_id);
-END;
-//
-
-DELIMITER ;
-
-DELIMITER //
-CREATE TRIGGER correct_event_date
-BEFORE INSERT ON event
-FOR EACH ROW
-BEGIN
-	DECLARE festival_start_date DATE;
-    DECLARE festival_end_date DATE;
-    
-    SELECT start_date,end_date
-    INTO festival_start_date,festival_end_date
-    FROM festival
-    WHERE (festival_id=new.festival_id);
-    
-    IF(festival_start_date>new.event_date or festival_end_date<new.event_date) THEN 
-		SET @msg = 'Invalid event date';
-		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = @msg;
-	END IF;
-END //
-DELIMITER ;
-
-DELIMITER //
-CREATE TRIGGER correct_performance_time
-BEFORE INSERT ON performance
-FOR EACH ROW
-BEGIN
-	DECLARE event_start_time TIME;
-    DECLARE event_end_time TIME;
-    
-    SELECT start_time,end_time
-    INTO event_start_time,event_end_time
-    FROM event
-    WHERE (event_id=new.event_id);
-    
-    IF(event_start_time>new.perf_time or event_end_time<DATE_ADD(new.perf_time, INTERVAL new.duration MINUTE) or event_end_time<=new.perf_time) THEN 
-		SET @msg = 'Invalid performance time or performance duration';
-		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = @msg;
-	END IF;
-END //
-DELIMITER ;
-
-DELIMITER $$
-
-CREATE TRIGGER no_double_booking
-BEFORE INSERT ON performance
-FOR EACH ROW
-BEGIN
-    DECLARE existing_count INT;
-
-    IF NEW.artist_id IS NOT NULL THEN
-        SELECT COUNT(*)
-        INTO existing_count
-        FROM performance p
-        JOIN event e ON p.event_id = e.event_id
-        WHERE p.artist_id = NEW.artist_id
-          AND e.event_date = (SELECT event_date FROM event WHERE event_id = NEW.event_id)
-          AND ((NEW.perf_time BETWEEN p.perf_time AND ADDTIME(p.perf_time, SEC_TO_TIME(p.duration * 60)))
-               OR (ADDTIME(NEW.perf_time, SEC_TO_TIME(NEW.duration * 60)) BETWEEN p.perf_time AND ADDTIME(p.perf_time, SEC_TO_TIME(p.duration * 60))))
-          AND p.event_id != NEW.event_id;
-
-        IF existing_count > 0 THEN
-            SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'Artist is already scheduled to perform at the same time.';
-        END IF;
-
-    ELSEIF NEW.band_id IS NOT NULL THEN
-        SELECT COUNT(*)
-        INTO existing_count
-        FROM performance p
-        JOIN event e ON p.event_id = e.event_id
-        WHERE p.band_id = NEW.band_id
-          AND e.event_date = (SELECT event_date FROM event WHERE event_id = NEW.event_id)
-          AND ((NEW.perf_time BETWEEN p.perf_time AND ADDTIME(p.perf_time, SEC_TO_TIME(p.duration * 60)))
-               OR (ADDTIME(NEW.perf_time, SEC_TO_TIME(NEW.duration * 60)) BETWEEN p.perf_time AND ADDTIME(p.perf_time, SEC_TO_TIME(p.duration * 60))))
-          AND p.event_id != NEW.event_id;
-
-        IF existing_count > 0 THEN
-            SIGNAL SQLSTATE '45000'
-            SET MESSAGE_TEXT = 'Band is already scheduled to perform at the same time.';
-        END IF;
-    END IF;
+  UPDATE review_summary
+  SET
+      avg_interpretation = (avg_interpretation*total_reviews + NEW.interpretation)/(total_reviews+1),
+      avg_sound_and_lighting = (avg_sound_and_lighting*total_reviews + NEW.sound_and_lighting)/(total_reviews+1),
+      avg_stage_presence = (avg_stage_presence*total_reviews + NEW.stage_presence)/(total_reviews+1),
+      avg_organization = (avg_organization*total_reviews + NEW.organization)/(total_reviews+1),
+      avg_overall_impression = (avg_overall_impression*total_reviews + NEW.overall_impression)/(total_reviews+1),
+      total_reviews = total_reviews + 1
+  WHERE performance_id = NEW.performance_id;
 END$$
 
-DELIMITER ;
-
-DELIMITER $$
-
-CREATE TRIGGER no_more_than_3_years
-BEFORE INSERT ON performance
+CREATE TRIGGER review_sum_after_update
+AFTER UPDATE ON review
 FOR EACH ROW
 BEGIN
-  DECLARE perf_year INT;
-  DECLARE count_streak INT;
+  UPDATE review_summary
+  SET
+      avg_interpretation = (avg_interpretation*total_reviews - OLD.interpretation + NEW.interpretation)/total_reviews,
+      avg_sound_and_lighting = (avg_sound_and_lighting*total_reviews - OLD.sound_and_lighting + NEW.sound_and_lighting)/total_reviews,
+      avg_stage_presence = (avg_stage_presence*total_reviews - OLD.stage_presence + NEW.stage_presence)/total_reviews,
+      avg_organization = (avg_organization*total_reviews - OLD.organization + NEW.organization)/total_reviews,
+      avg_overall_impression = (avg_overall_impression*total_reviews - OLD.overall_impression + NEW.overall_impression)/total_reviews
+  WHERE performance_id = OLD.performance_id;
+END$$
 
-  SELECT f.year
-  INTO perf_year
-  FROM event e
-  JOIN festival f ON e.festival_id = f.festival_id
-  WHERE e.event_id = NEW.event_id;
-
-  IF NEW.artist_id IS NOT NULL THEN
-    SELECT COUNT(DISTINCT f.year) INTO count_streak
-    FROM performance p
-    JOIN event e ON p.event_id = e.event_id
-    JOIN festival f ON e.festival_id = f.festival_id
-    WHERE p.artist_id = NEW.artist_id
-      AND f.year IN (perf_year - 1, perf_year - 2, perf_year - 3);
-
-    IF count_streak = 3 THEN
-      SIGNAL SQLSTATE '45000'
-      SET MESSAGE_TEXT = 'Artist cannot participate in more than 3 consecutive festival years.';
-    END IF;
-
-  ELSEIF NEW.band_id IS NOT NULL THEN
-    SELECT COUNT(DISTINCT f.year) INTO count_streak
-    FROM performance p
-    JOIN event e ON p.event_id = e.event_id
-    JOIN festival f ON e.festival_id = f.festival_id
-    WHERE p.band_id = NEW.band_id
-      AND f.year IN (perf_year - 1, perf_year - 2, perf_year - 3);
-
-    IF count_streak = 3 THEN
-      SIGNAL SQLSTATE '45000'
-      SET MESSAGE_TEXT = 'Band cannot participate in more than 3 consecutive festival years.';
-    END IF;
+CREATE TRIGGER review_sum_after_delete
+AFTER DELETE ON review
+FOR EACH ROW
+BEGIN
+  IF (SELECT total_reviews FROM review_summary WHERE performance_id = OLD.performance_id) <= 1 THEN
+      DELETE FROM review_summary WHERE performance_id = OLD.performance_id;
+  ELSE
+    UPDATE review_summary
+	  SET
+        avg_interpretation = (avg_interpretation*total_reviews - OLD.interpretation)/(total_reviews-1),
+        avg_sound_and_lighting = (avg_sound_and_lighting*total_reviews - OLD.sound_and_lighting)/(total_reviews-1),
+        avg_stage_presence = (avg_stage_presence*total_reviews - OLD.stage_presence)/(total_reviews-1),
+        avg_organization = (avg_organization*total_reviews - OLD.organization)/(total_reviews-1),
+        avg_overall_impression = (avg_overall_impression*total_reviews - OLD.overall_impression)/(total_reviews-1),
+        total_reviews = total_reviews - 1
+	  WHERE performance_id = OLD.performance_id;
   END IF;
 END$$
-
 DELIMITER ;
