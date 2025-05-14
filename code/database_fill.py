@@ -428,7 +428,7 @@ if __name__ == "__main__":
     print("All tables populated.")
 
     # Run (uncomment) only when you want to change the DML inserts
-    '''
+
     dump_location()
     dump_festival()
     dump_stage()
@@ -456,4 +456,3 @@ if __name__ == "__main__":
     dump_buyer_queue()
     dump_review()
     print("All inserts to DML.")
-'''

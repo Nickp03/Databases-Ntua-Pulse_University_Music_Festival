@@ -1285,3 +1285,36 @@ BEGIN
   END IF;
 END$$
 DELIMITER ;
+
+DELIMITER $$
+
+CREATE TRIGGER check_review_event_match
+BEFORE INSERT ON review
+FOR EACH ROW
+BEGIN
+DECLARE v_ticket_event_id INT;
+DECLARE v_perf_event_id   INT;
+
+  -- Παίρνουμε το event_id από το ticket
+  SELECT event_id
+  INTO v_ticket_event_id
+  FROM ticket
+  WHERE ticket_id = NEW.ticket_id;
+
+  -- Παίρνουμε το event_id από το performance
+  SELECT event_id
+  INTO v_perf_event_id
+  FROM performance
+  WHERE performance_id = NEW.performance_id;
+
+  -- Έλεγχος εγκυρότητας: πρέπει να συμπίπτουν
+  IF v_ticket_event_id IS NULL
+     OR v_perf_event_id IS NULL
+     OR v_ticket_event_id <> v_perf_event_id
+  THEN
+    SIGNAL SQLSTATE '45000'
+      SET MESSAGE_TEXT = 'Invalid review: ticket event does not match performance event';
+  END IF;
+END$$
+
+DELIMITER ;
