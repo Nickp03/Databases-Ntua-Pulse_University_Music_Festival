@@ -1,1 +1,188 @@
 Q08 Output.
+
+This is the output of the query 
+
++----------+-----------+
+| staff_id | role_name |
++----------+-----------+
+|      201 | support   |
+|      202 | support   |
+|      204 | support   |
+|      205 | support   |
+|      206 | support   |
+|      207 | support   |
+|      208 | support   |
+|      209 | support   |
+|      210 | support   |
+|      211 | support   |
+|      212 | support   |
+|      213 | support   |
+|      214 | support   |
+|      215 | support   |
+|      216 | support   |
+|      217 | support   |
+|      218 | support   |
+|      219 | support   |
+|      220 | support   |
+|      221 | support   |
+|      223 | support   |
+|      224 | support   |
+|      225 | support   |
+|      226 | support   |
+|      228 | support   |
+|      229 | support   |
+|      230 | support   |
+|      231 | support   |
+|      232 | support   |
+|      233 | support   |
+|      234 | support   |
+|      235 | support   |
+|      236 | support   |
+|      237 | support   |
+|      238 | support   |
+|      239 | support   |
+|      240 | support   |
+|      241 | support   |
+|      242 | support   |
+|      243 | support   |
+|      244 | support   |
+|      245 | support   |
+|      246 | support   |
+|      247 | support   |
+|      248 | support   |
+|      249 | support   |
+|      250 | support   |
+|      251 | support   |
+|      252 | support   |
+|      253 | support   |
+|      254 | support   |
+|      255 | support   |
+|      256 | support   |
+|      257 | support   |
+|      258 | support   |
+|      259 | support   |
+|      260 | support   |
+|      261 | support   |
+|      262 | support   |
+|      263 | support   |
+|      264 | support   |
+|      265 | support   |
+|      266 | support   |
+|      267 | support   |
+|      268 | support   |
+|      269 | support   |
+|      270 | support   |
+|      271 | support   |
+|      272 | support   |
+|      273 | support   |
+|      274 | support   |
+|      275 | support   |
+|      276 | support   |
+|      277 | support   |
+|      278 | support   |
+|      279 | support   |
+|      280 | support   |
+|      281 | support   |
+|      282 | support   |
+|      283 | support   |
+|      284 | support   |
+|      285 | support   |
+|      286 | support   |
+|      287 | support   |
+|      288 | support   |
+|      289 | support   |
+|      290 | support   |
+|      291 | support   |
+|      292 | support   |
+|      293 | support   |
+|      294 | support   |
+|      296 | support   |
+|      297 | support   |
+|      298 | support   |
+|      299 | support   |
+|      300 | support   |
+|      301 | support   |
+|      302 | support   |
+|      303 | support   |
+|      304 | support   |
+|      305 | support   |
+|      306 | support   |
+|      307 | support   |
+|      308 | support   |
+|      309 | support   |
+|      310 | support   |
+|      312 | support   |
+|      313 | support   |
+|      314 | support   |
+|      315 | support   |
+|      316 | support   |
+|      317 | support   |
+|      318 | support   |
+|      319 | support   |
+|      320 | support   |
+|      322 | support   |
+|      323 | support   |
+|      324 | support   |
+|      325 | support   |
+|      326 | support   |
+|      327 | support   |
+|      328 | support   |
+|      329 | support   |
+|      330 | support   |
+|      331 | support   |
+|      332 | support   |
+|      333 | support   |
+|      334 | support   |
+|      335 | support   |
+|      336 | support   |
+|      337 | support   |
+|      338 | support   |
+|      339 | support   |
+|      340 | support   |
+|      341 | support   |
+|      342 | support   |
+|      343 | support   |
+|      344 | support   |
+|      345 | support   |
+|      346 | support   |
+|      347 | support   |
+|      348 | support   |
+|      349 | support   |
+|      350 | support   |
++----------+-----------+
+144 rows in set
+
+
+This prints out the total support staff:
+    select staff_id,role_id from staff where role_id=2;
+150 rows in set
+
+This prints out the scheduled staff on the selected date:
+
+    select staff_id ,staff_role.role_name
+    from staff
+    join staff_role
+    on staff.role_id=staff_role.role_id
+    WHERE staff.role_id=2 AND staff_id  IN (
+        select staff_id 
+        from staff_schedule 
+        join event 
+        on event.event_id=staff_schedule.event_id 
+        where event.event_date=@date);
+
+    +----------+-----------+
+    | staff_id | role_name |
+    +----------+-----------+
+    |      203 | support   |
+    |      222 | support   |
+    |      227 | support   |
+    |      295 | support   |
+    |      311 | support   |
+    |      321 | support   |
+    +----------+-----------+
+    6 rows in set (0.004 sec)
+
+
+
+
+

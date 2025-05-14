@@ -425,6 +425,7 @@ BEGIN
         JOIN event e1 ON e1.event_id = in_event_id
         WHERE e2.event_date = e1.event_date
       )
+    ORDER BY RAND()
     LIMIT 1;
 
     IF available_staff_id IS NOT NULL THEN
