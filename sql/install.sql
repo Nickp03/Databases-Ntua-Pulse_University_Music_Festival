@@ -297,9 +297,6 @@ CREATE TABLE review_summary (-- Extra table to have per-performance reviews
     FOREIGN KEY (performance_id) REFERENCES performance(performance_id) ON DELETE CASCADE
 )ENGINE=InnoDB;
 
-CREATE INDEX review_perf ON review(performance_id);
-CREATE INDEX review_ticket ON review(ticket_id);
-CREATE INDEX review_perf_date ON review(performance_id, review_date);
 CREATE INDEX perf_time ON performance(perf_time);
 
 DELIMITER $$
