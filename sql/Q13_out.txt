@@ -3,26 +3,27 @@ Q13 Output.
 artist_id|stage_name|continents_participated|
 ---------+----------+-----------------------+
         4|Taylor999 |                      4|
-       17|Dakota849 |                      3|
-       19|Avery908  |                      5|
+       19|Avery908  |                      4|
        26|Dakota424 |                      3|
        50|Avery766  |                      3|
        56|Taylor779 |                      3|
        66|Jamie447  |                      3|
        71|Jordan228 |                      3|
+       87|Robin204  |                      3|
       101|Taylor678 |                      3|
-      120|Avery999  |                      3|
+      115|Charlie209|                      3|
+      120|Avery999  |                      5|
       128|Taylor875 |                      4|
       133|Jordan259 |                      3|
-      159|Dakota560 |                      4|
-      181|Jamie881  |                      3|
+      159|Dakota560 |                      3|
+      175|Jamie374  |                      3|
       183|Jamie839  |                      3|
       190|Casey243  |                      3|
-      203|Jamie288  |                      3|
-      209|Taylor573 |                      4|
+      209|Taylor573 |                      3|
       213|Robin878  |                      3|
-      223|Morgan325 |                      3|
+      223|Morgan325 |                      4|
       230|Dakota209 |                      3|
       246|Morgan257 |                      3|
       263|Casey710  |                      3|
       278|Taylor208 |                      3|
+      291|Dakota462 |                      3|
