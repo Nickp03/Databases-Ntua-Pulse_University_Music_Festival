@@ -1,1 +1,77 @@
-Q02 Output.
+Q02 Output
+
+Παρακάτω βλέπουμε το output για λιγες χρονιες και κάποια είδη:
+
+-- Για 2024, rock:
+
++------------+-------+----------------------+
+| stage_name | genre | Συμμετείχε           |
++------------+-------+----------------------+
+| Alex652    | Rock  | Όχι                  |
+| Alex787    | Rock  | Όχι                  |
+| Alex858    | Rock  | Όχι                  |
+| Alex949    | Rock  | Όχι                  |
+| Avery259   | Rock  | Όχι                  |
+| Avery548   | Rock  | Όχι                  |
+| Casey314   | Rock  | Όχι                  |
+| Charlie151 | Rock  | Όχι                  |
+| Charlie314 | Rock  | Όχι                  |
+| Dakota696  | Rock  | Όχι                  |
+| Dakota926  | Rock  | Όχι                  |
+| Jamie339   | Rock  | Όχι                  |
+| Jamie595   | Rock  | Όχι                  |
+| Morgan735  | Rock  | Όχι                  |
+| Robin558   | Rock  | Όχι                  |
+| Taylor283  | Rock  | Όχι                  |
+| Taylor670  | Rock  | Όχι                  |
+| Taylor838  | Rock  | Όχι                  |
+| Taylor902  | Rock  | Όχι                  |
+| Taylor999  | Rock  | Ναι                  |
++------------+-------+----------------------+
+
+-- Για 2001, pop:
+
++------------+-------+----------------------+
+| stage_name | genre | Συμμετείχε           |
++------------+-------+----------------------+
+| Alex858    | Pop   | Ναι                  |
+| Avery156   | Pop   | Όχι                  |
+| Avery908   | Pop   | Όχι                  |
+| Casey831   | Pop   | Όχι                  |
+| Charlie295 | Pop   | Όχι                  |
+| Charlie904 | Pop   | Όχι                  |
+| Dakota424  | Pop   | Όχι                  |
+| Dakota849  | Pop   | Όχι                  |
+| Dakota926  | Pop   | Όχι                  |
+| Jamie653   | Pop   | Όχι                  |
+| Jamie965   | Pop   | Όχι                  |
+| Morgan129  | Pop   | Όχι                  |
+| Morgan487  | Pop   | Όχι                  |
+| Morgan670  | Pop   | Όχι                  |
+| Robin211   | Pop   | Όχι                  |
+| Robin554   | Pop   | Όχι                  |
+| Taylor435  | Pop   | Όχι                  |
+| Taylor556  | Pop   | Όχι                  |
++------------+-------+----------------------+
+
+-- Για 2015, Country:
+
++------------+---------+----------------------+
+| stage_name | genre   | Συμμετείχε           |
++------------+---------+----------------------+
+| Casey605   | Country | Όχι                  |
+| Casey759   | Country | Όχι                  |
+| Dakota271  | Country | Όχι                  |
+| Dakota418  | Country | Όχι                  |
+| Dakota941  | Country | Όχι                  |
+| Dakota960  | Country | Όχι                  |
+| Jamie132   | Country | Όχι                  |
+| Jordan259  | Country | Όχι                  |
+| Jordan517  | Country | Όχι                  |
+| Jordan947  | Country | Όχι                  |
+| Morgan131  | Country | Όχι                  |
+| Morgan255  | Country | Όχι                  |
+| Morgan574  | Country | Όχι                  |
+| Taylor384  | Country | Όχι                  |
+| Taylor875  | Country | Ναι                  |
++------------+---------+----------------------+

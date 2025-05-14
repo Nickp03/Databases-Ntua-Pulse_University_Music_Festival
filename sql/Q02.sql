@@ -1,8 +1,8 @@
 -- Q02
 
 -- Ορισμός των μεταβλητών εισόδου για το έτος και το είδος
-SET @input_year = 2021;
-SET @input_genre = 'rock';
+SET @input_year = 2015;
+SET @input_genre = 'Country';
 
 SELECT a.stage_name, g.genre_name AS genre, CASE WHEN f_in.year IS NOT NULL THEN 'Ναι' ELSE 'Όχι' END AS Συμμετείχε
 FROM artist AS a
