@@ -2,25 +2,24 @@
 -- SIMPLE
 SET @searched_for_owner=789;
 
-select owner_id,review.ticket_id,performance_id,SUM(overall_impression+interpretation+sound_and_lighting+stage_presence+organization)/5 AS Average 
+select owner_id,review.ticket_id,event_id,SUM(overall_impression+interpretation+sound_and_lighting+stage_presence+organization)/5 AS Average 
 from review 
 join ticket 
-on ticket.ticket_id=review.ticket_id 
+on ticket.ticket_id=review.ticket_id AND activated=TRUE
 where owner_id=@searched_for_owner
-group by owner_id,performance_id 
-order by owner_id,performance_id;
+group by owner_id,event_id 
+order by owner_id,event_id;
 
--- FORCE INDEX
+--FORCE INDEX
 SET @searched_for_owner=789;
 
-select owner_id,review.ticket_id,performance_id,SUM(overall_impression+interpretation+sound_and_lighting+stage_presence+organization)/5 AS Average 
+select owner_id,review.ticket_id,event_id,SUM(overall_impression+interpretation+sound_and_lighting+stage_presence+organization)/5 AS Average 
 from review force index (review_ticket)
-join ticket force index (tick_id)
-on ticket.ticket_id=review.ticket_id 
+join ticket force index (PRIMARY)
+on ticket.ticket_id=review.ticket_id AND activated=TRUE
 where owner_id=@searched_for_owner
-group by owner_id,performance_id 
-order by owner_id,performance_id;
-
+group by owner_id,event_id 
+order by owner_id,event_id;
 
 -- owners to use as examples:
 -- to ensure they have reviewed multiple performances run
