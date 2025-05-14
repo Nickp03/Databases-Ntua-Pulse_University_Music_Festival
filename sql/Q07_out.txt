@@ -1,5 +1,7 @@
 Q07 Output.
 
+The results of the query may vary due to the random assignment of technical staff. Below 
+
 This is the output of the query
 +-------------+--------------------------+
 | festival_id | Average_experience_level |
@@ -20,4 +22,13 @@ This is the output of the modified query where instead of LIMIT 1 LIMIT 5 is use
 |          25 |                   1.6667 |
 |          28 |                   1.6667 |
 +-------------+--------------------------+
+
+The reader can use the following query to verify the accuracy of the calculations.
+
+SELECT festival_id,level_id
+FROM event
+JOIN staff_schedule ON event.event_id = staff_schedule.event_id
+JOIN staff ON staff.staff_id = staff_schedule.staff_id
+WHERE staff.role_id = 4
+ORDER BY festival_id;
 
