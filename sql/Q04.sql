@@ -1,5 +1,7 @@
 -- Q04
 
+EXPLAIN 
+
 SELECT artist.stage_name, AVG(review_summary.avg_interpretation) AS avg_interpretation, AVG(review_summary.avg_overall_impression) AS avg_overall_impression
 FROM artist
 INNER JOIN performance ON performance.artist_id = artist.artist_id

@@ -134,3 +134,42 @@ Q04 Output
 |            125 |             2 |               3.00 |                   3.00 |               4.50 |             3.00 |                   4.00 |
 |            126 |             1 |               2.00 |                   5.00 |               3.00 |             1.00 |                   3.00 |
 
+| {
+  "query_block": {
+    "select_id": 1,
+    "table": {
+      "table_name": "artist",
+      "access_type": "const",
+      "possible_keys": ["PRIMARY"],
+      "key": "PRIMARY",
+      "key_length": "4",
+      "used_key_parts": ["artist_id"],
+      "ref": ["const"],
+      "rows": 1,
+      "filtered": 100
+    },
+    "table": {
+      "table_name": "performance",
+      "access_type": "ref",
+      "possible_keys": ["PRIMARY", "artist_id"],
+      "key": "artist_id",
+      "key_length": "5",
+      "used_key_parts": ["artist_id"],
+      "ref": ["const"],
+      "rows": 2,
+      "filtered": 100,
+      "using_index": true
+    },
+    "table": {
+      "table_name": "review_summary",
+      "access_type": "eq_ref",
+      "possible_keys": ["PRIMARY"],
+      "key": "PRIMARY",
+      "key_length": "4",
+      "used_key_parts": ["performance_id"],
+      "ref": ["pulse_university.performance.performance_id"],
+      "rows": 1,
+      "filtered": 100
+    }
+  }
+} |
