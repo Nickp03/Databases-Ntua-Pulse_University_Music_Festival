@@ -4,9 +4,7 @@ README file.
 
 This repository contains the Semester Project for the **Databases** course of **ECE NTUA**.
 
-## 📁 Project Overview
-
-**Databases-NTUA**
+## Project Overview
 This repository is the Semester Project of Databases of ECE NTUA.
 We were asked to develop a functional DB that could be used in a music festival
 Used MySQLWorkbench for designing the DB
