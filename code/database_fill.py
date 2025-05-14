@@ -192,7 +192,7 @@ def fill_staff(): _fill_from_csv('staff',
     'staff.csv')
 
 def fill_staff_schedule(): _fill_from_csv('staff_schedule',
-    ['staff_id','event_id','role_id'],
+    ['staff_id','event_id'],
     'staff_schedule.csv')
 
 def fill_genre(): _fill_from_csv('genre',
@@ -304,7 +304,7 @@ def dump_staff(): _dump_from_csv('staff',
     '../sql/load.sql')
 
 def dump_staff_schedule(): _dump_from_csv('staff_schedule',
-    ['staff_id','event_id','role_id'],
+    ['staff_id','event_id'],
     'staff_schedule.csv',
     '../sql/load.sql')
 
