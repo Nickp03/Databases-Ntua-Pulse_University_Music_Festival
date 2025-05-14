@@ -1,9 +1,11 @@
 Q15 Output.
 
-first_name|last_name|artist_name|total_score|
-----------+---------+-----------+-----------+
-Taylor    |Lee      |Morgan257  |         23|
-Avery     |Davis    |Dakota424  |         22|
-Dakota    |Miller   |Taylor875  |         22|
-Casey     |Miller   |Taylor942  |         21|
-Casey     |Miller   |Taylor279  |         21|
++------------+-----------+-------------+-------------+
+| first_name | last_name | artist_name | total_score |
++------------+-----------+-------------+-------------+
+| Jamie      | Smith     | Morgan735   |          19 |
+| Jordan     | Miller    | Morgan735   |          19 |
+| Casey      | Anderson  | Avery999    |          18 |
+| Jordan     | Brown     | Taylor942   |          15 |
+| Casey      | Anderson  | Taylor942   |           9 |
++------------+-----------+-------------+-------------+
