@@ -1,4 +1,4 @@
---Q07
+-- Q07
 SELECT 
     festival_id,
     SUM(level_id) / COUNT(level_id) AS Average_experience_level
@@ -8,6 +8,4 @@ JOIN staff ON staff.staff_id = staff_schedule.staff_id
 WHERE staff.role_id = 4 
 GROUP BY festival_id
 ORDER BY Average_experience_level ASC
-LIMIT 1;
-
-
+LIMIT 5;
