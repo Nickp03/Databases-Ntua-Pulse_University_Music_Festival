@@ -134,6 +134,8 @@ Q04 Output
 |            125 |             2 |               3.00 |                   3.00 |               4.50 |             3.00 |                   4.00 |
 |            126 |             1 |               2.00 |                   5.00 |               3.00 |             1.00 |                   3.00 |
 
+-- Κανονικά χωρις force index (το performance παίρνει αυτόματα index το artist_id) με nested loop join (default) βλέπουμε:
+
 | {
   "query_block": {
     "select_id": 1,
@@ -170,6 +172,44 @@ Q04 Output
       "ref": ["pulse_university.performance.performance_id"],
       "rows": 1,
       "filtered": 100
+    }
+  }
+} |
+
+-- Με force index (PRIMARY) στο performance με nested loop join (default) βλέπουμε:
+
+| {
+  "query_block": {
+    "select_id": 1,
+    "table": {
+      "table_name": "artist",
+      "access_type": "const",
+      "possible_keys": ["PRIMARY"],
+      "key": "PRIMARY",
+      "key_length": "4",
+      "used_key_parts": ["artist_id"],
+      "ref": ["const"],
+      "rows": 1,
+      "filtered": 100
+    },
+    "table": {
+      "table_name": "review_summary",
+      "access_type": "ALL",
+      "possible_keys": ["PRIMARY"],
+      "rows": 197,
+      "filtered": 100
+    },
+    "table": {
+      "table_name": "performance",
+      "access_type": "eq_ref",
+      "possible_keys": ["PRIMARY"],
+      "key": "PRIMARY",
+      "key_length": "4",
+      "used_key_parts": ["performance_id"],
+      "ref": ["pulse_university.review_summary.performance_id"],
+      "rows": 1,
+      "filtered": 100,
+      "attached_condition": "performance.artist_id = 58"
     }
   }
 } |
