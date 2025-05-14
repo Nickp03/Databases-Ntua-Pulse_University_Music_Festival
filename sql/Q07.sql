@@ -8,4 +8,4 @@ JOIN staff ON staff.staff_id = staff_schedule.staff_id
 WHERE staff.role_id = 4 
 GROUP BY festival_id
 ORDER BY Average_experience_level ASC
-LIMIT 5;
+LIMIT 1;
