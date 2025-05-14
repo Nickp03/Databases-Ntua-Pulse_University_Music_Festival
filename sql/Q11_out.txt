@@ -5,24 +5,44 @@ artist_id|stage_name|appearances|
         5|Alex858   |          1|
         8|Jamie595  |          1|
        15|Charlie151|          1|
+       17|Dakota849 |          3|
+       26|Dakota424 |          3|
        31|Avery893  |          2|
        41|Alex445   |          2|
+       50|Avery766  |          3|
+       56|Taylor779 |          3|
        58|Taylor942 |          2|
        60|Charlie546|          2|
+       66|Jamie447  |          3|
+       71|Jordan228 |          3|
+       76|Robin108  |          3|
+       87|Robin204  |          3|
        89|Charlie130|          1|
+      101|Taylor678 |          3|
       103|Casey934  |          2|
+      106|Alex934   |          3|
+      115|Charlie209|          3|
+      133|Jordan259 |          3|
       142|Casey721  |          2|
       145|Alex132   |          1|
       151|Jamie909  |          2|
       169|Morgan765 |          2|
+      175|Jamie374  |          3|
+      181|Jamie881  |          3|
+      183|Jamie839  |          3|
+      190|Casey243  |          3|
       192|Morgan600 |          2|
       198|Avery219  |          1|
+      203|Jamie288  |          3|
       218|Taylor279 |          1|
       220|Morgan709 |          1|
       221|Robin112  |          2|
       225|Robin502  |          1|
+      230|Dakota209 |          3|
+      246|Morgan257 |          3|
       253|Robin580  |          2|
       257|Charlie135|          2|
+      263|Casey710  |          3|
       269|Charlie839|          2|
       287|Jamie387  |          1|
       297|Robin178  |          2|
@@ -43,4 +63,4 @@ LIMIT 1;
 
 artist_id|stage_name|total_appearances|
 ---------+----------+-----------------+
-        9|Morgan735 |                7|
+        9|Morgan735 |                8|
