@@ -1,6 +1,6 @@
 -- Q06
 -- SIMPLE
-SET @searched_for_owner=1421;
+SET @searched_for_owner=749;
 
 with reviewed_performances AS(
     select owner_id,ticket.event_id,performance_id,SUM(overall_impression+interpretation+sound_and_lighting+stage_presence+organization) AS Performance_Average 
@@ -19,8 +19,8 @@ join reviewed_performances
 on reviewed_performances.performance_id=performance.performance_id
 group by event_id;
 
--- visitors to use as examples( they have reviewd multiple performances of an event): 789,729,1421
-
+-- visitors to use as examples( they have reviewd multiple performances of an event): 729,749
+-- select owner_id,count(performance_id) from review join ticket on ticket.ticket_id=review.ticket_id group by owner_id having count(owner_id)>1;
 
 
 
